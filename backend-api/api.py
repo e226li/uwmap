@@ -1,9 +1,9 @@
 from typing import Tuple, NamedTuple
-
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Security, status
 from fastapi.security import APIKeyHeader
 import yaml
-import sqlite3
+from databases import Database
 
 
 class Count(NamedTuple):
@@ -11,12 +11,21 @@ class Count(NamedTuple):
     bluetooth: int
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await database.connect()
+    yield
+    await database.disconnect()
+
+
+app = FastAPI(lifespan=lifespan)
 
 api_key_header = APIKeyHeader(name="X-API-Key")
 
 with open("keys.yaml") as f:
     api_keys = yaml.safe_load(f)
+
+database = Database("sqlite:///device-data.db")
 
 
 def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
@@ -30,9 +39,16 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
 
 @app.get("/")
 async def root():
-    return
+    return "alive"
 
 
-@app.post("/data/")
+@app.post("/data/", status_code=204)
 async def save_data(id: int, timestamp_unix_epoch: int, location: Tuple[float, float], device_count: Count):
-    raise NotImplementedError
+    # enforced types should mean no sql injection occurs
+    query = "INSERT INTO device_data VALUES(:id, :timestamp, :lat, :long, :count)"
+    corrected_device_count = (device_count.bluetooth + device_count.wifi) / 0.7
+    values = {'id': id, 'timestamp': timestamp_unix_epoch, 'lat': location[0], 'long': location[1],
+              'count': corrected_device_count}
+
+    await database.execute(query=query, values=values)
+    return
