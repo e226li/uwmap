@@ -49,7 +49,8 @@ async def root():
 
 
 @app.post("/data/", status_code=204)
-async def save_data(id: int, timestamp_unix_epoch: int, location: Location, device_count: Count):
+async def save_data(id: int, timestamp_unix_epoch: int, location: Location, device_count: Count,
+                    api_key: str = Security(get_api_key)):
     corrected_device_count = int((device_count.bluetooth + device_count.wifi) / 0.7)
 
     # enforced types should mean no sql injection occurs
