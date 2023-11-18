@@ -1,5 +1,5 @@
 {
-  "name": "uwmap",
+  "name": "main-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,9 +15,12 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
+    "@types/mapbox-gl": "^2.7.18",
+    "mapbox-gl": "^2.15.0",
     "next": "^14.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-map-gl": "^7.1.6",
     "superjson": "^1.13.1",
     "zod": "^3.22.4"
   },
