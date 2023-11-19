@@ -58,7 +58,7 @@ function getData() {
 
 export default function LocationGraphLocationGraph({locationName}: {locationName: string}) {
 
-    const data = getData();
+    var data = getData();
     const currentHour = new Date().getHours();
     
     var densityPercentage = 0;
@@ -66,6 +66,12 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
         densityPercentage = Math.floor((data[currentHour]?.currentDensity / data[currentHour]?.density) * 100);
     }
     const message = generateMessage(densityPercentage);
+
+    var barWidth = 500;
+    if (screen.width < 640) {
+        data = data.filter((entry) => entry.hour >= currentHour && entry.hour < currentHour + 12);
+        barWidth = 375;
+    }
 
     return (
         <div>
@@ -77,7 +83,7 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
                 </div>  
             </div>
             <BarChart
-                width={500}
+                width={barWidth}
                 height={200}
                 data={data}
                 barGap={-30}
