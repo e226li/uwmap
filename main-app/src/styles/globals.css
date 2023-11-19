@@ -5,3 +5,19 @@
 body {
     @apply bg-darkbg text-white;
 }
+
+.mapboxgl-popup-close-button {
+    display: none
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+    display: none
+}
+
+.mapboxgl-popup-content {
+    @apply bg-darkbg rounded-lg drop-shadow-lg mt-8 w-fit self-center p-5 !important;
+}
+
+.recharts-layer .recharts-cartesian-axis-tick > text > tspan {
+    fill: #fff !important;
+}
