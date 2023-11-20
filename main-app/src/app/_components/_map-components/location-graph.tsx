@@ -3,39 +3,40 @@ import { BarChart, Bar, XAxis, YAxis, Cell} from 'recharts';
 function generateMessage(densityPercentage: number) {
     var message = "";
     const currentHour = new Date().getHours();
-   
-    switch (true) {
-        case densityPercentage < 25:
-            message = "It's not very busy";
-            break;
-        case densityPercentage < 50:
-            message = "It's a little busy";
-            break;
-        case densityPercentage < 75:
-            message = "It's getting busy";
-            break;
-        case densityPercentage < 100:
-            message = "It's busy";
-            break;
-        case densityPercentage < 125:
-            message = "It's busier than usual";
-            break;
-        case densityPercentage < 150:
-            message = "It's very busy";
-            break;
-        case densityPercentage > 150:
-            message = "It's a lot busier than usual";
-            break;
+
+    const densityMessages = {
+        25: "It's not very busy",
+        50: "It's a little busy",
+        75: "It's getting busy",
+        100: "It's busy",
+        125: "It's busier than usual",
+        150: "It's very busy",
+        175: "It's a lot busier than usual"
     }
 
-    if (currentHour < 6) {
-        message += " this early morning";
-    } else if (currentHour < 12) {
-        message += " this morning";
-    } else if (currentHour < 18) {
-        message += " this afternoon";
-    } else if (currentHour < 24) {
-        message += " this evening";
+    const timeMessages = {
+        6: "this early morning",
+        12: "this morning",
+        18: "this afternoon",
+        24: "this evening"
+    }
+
+    for (const [key, value] of Object.entries(densityMessages)) {
+        if (densityPercentage < parseInt(key)) {
+            message = value;
+            break;
+        }
+    }
+
+    if (message === "") {
+        message = "It's really busier than usual";
+    }
+
+    for (const [key, value] of Object.entries(timeMessages)) {
+        if (currentHour < parseInt(key)) {
+            message += " " + value;
+            break;
+        }
     }
 
     return message;
@@ -63,18 +64,23 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
     
     var densityPercentage = 0;
     if (data[currentHour]?.currentDensity !== undefined && data[currentHour]?.density !== undefined && data[currentHour]?.density !== 0) {
-        densityPercentage = Math.floor((data[currentHour]?.currentDensity / data[currentHour]?.density) * 100);
+        densityPercentage = Math.floor((data[currentHour].currentDensity / data[currentHour].density) * 100);
     }
     const message = generateMessage(densityPercentage);
 
-    var barWidth = 500;
-    if (screen.width < 640) {
-        data = data.filter((entry) => entry.hour >= currentHour && entry.hour < currentHour + 12);
-        barWidth = 375;
+    var barWidth = 400;
+    if (screen.width < 768) {
+        data = data.filter((entry) => entry.hour < (currentHour + 12));
+        if (currentHour > 12) {
+            data = data.filter((entry) => entry.hour > (currentHour - 12 + (23 - currentHour)));
+        } else {
+            data = data.filter((entry) => entry.hour >= (currentHour));
+        }
+        barWidth = 300; 
     }
 
     return (
-        <div>
+        <div className='self-center'>
             <div className='mb-4'>
                 <h1 className="text-2xl font-bold">{locationName}</h1>
                 <div className="flex flex-row items-center gap-2 my-1">
@@ -83,6 +89,7 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
                 </div>  
             </div>
             <BarChart
+                style={{margin: 'auto'}}
                 width={barWidth}
                 height={200}
                 data={data}

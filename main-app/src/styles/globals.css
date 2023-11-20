@@ -15,7 +15,7 @@ body {
 }
 
 .mapboxgl-popup-content {
-    @apply bg-darkbg rounded-lg drop-shadow-lg w-fit self-center p-5 mt-10 sm:scale-110 sm:mt-12 !important;
+    @apply bg-darkbg rounded-lg drop-shadow-lg w-[90vw] self-center p-5 mt-10 md:scale-110 md:mt-12 md:w-auto !important;
 }
 
 .recharts-layer .recharts-cartesian-axis-tick > text > tspan {
