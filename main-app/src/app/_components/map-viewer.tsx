@@ -1,8 +1,7 @@
 "use client"
 
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef} from "react";
 import Map, {Marker, Popup} from 'react-map-gl';
-import ReactMapGL from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapPin from './_map-components/map-pin';
 import LocationGraph from "./_map-components/location-graph";
@@ -49,15 +48,21 @@ export default function MapViewer(){
     []
   );
 
+  const defaultLongitude = -80.5424;
+  const defaultLatitude = 43.4705;
+  const distanceOut = 0.02;
+  const bounds: [number, number, number, number] = [defaultLongitude - distanceOut, defaultLatitude - distanceOut, defaultLongitude + distanceOut, defaultLatitude + distanceOut];
+
   return (
     <Map
       ref={mapRef}
       mapboxAccessToken={token}
       initialViewState={{
-        longitude: -80.54, 
-        latitude: 43.47,
-        zoom: 15
+        longitude: -80.5424, 
+        latitude: 43.4705,
+        zoom: 15.5, 
       }}
+      maxBounds={bounds}
       mapStyle="mapbox://styles/mapbox/dark-v11"
     >
 
@@ -73,7 +78,6 @@ export default function MapViewer(){
           <LocationGraph locationName={popupInfo.location} />
         </Popup>
       )}
-
     </Map>
   );
 }
