@@ -61,7 +61,7 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
 
     var data = getData();
     const currentHour = new Date().getHours();
-    
+
     var densityPercentage = 0;
     if (data[currentHour]?.currentDensity !== undefined && data[currentHour]?.density !== undefined && data[currentHour]?.density !== 0) {
         densityPercentage = Math.floor((data[currentHour].currentDensity / data[currentHour].density) * 100);

@@ -1,15 +1,16 @@
 "use client"
 
-import { useMemo, useState, useRef} from "react";
+import { useMemo, useState, useRef, useCallback} from "react";
 import Map, {Marker, Popup} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapPin from './_map-components/map-pin';
 import LocationGraph from "./_map-components/location-graph";
 import LOCATIONS from "map-data/locations.json";
+import type {MapRef} from 'react-map-gl';
 
 export default function MapViewer(){
   
-  const token = "pk.eyJ1IjoiYWxleHN0YXJvc3RhIiwiYSI6ImNscDNoYmdyZDB4OWsyaXQyYXZ5Y3h5ZTgifQ.dmngOhy0-UsGvBJyjwPD4g"
+  const token = "pk.eyJ1IjoiYWxleHN0YXJvc3RhIiwiYSI6ImNscDNoYXlkZTBuZDEycXAybHB2ZXM4ZjYifQ.3R4AEyIcUG5fwlJLnrjXiw"
 
   type LocationType = {
     id: number;
@@ -19,7 +20,7 @@ export default function MapViewer(){
   };
   
   const [popupInfo, setPopupInfo] = useState<LocationType | null>(null);
-  const mapRef = useRef(null)
+  const mapRef = useRef<MapRef>();
 
   const pins = useMemo(
     () =>
@@ -52,6 +53,13 @@ export default function MapViewer(){
   const defaultLatitude = 43.4705;
   const distanceOut = 0.02;
   const bounds: [number, number, number, number] = [defaultLongitude - distanceOut, defaultLatitude - distanceOut, defaultLongitude + distanceOut, defaultLatitude + distanceOut];
+  
+  const onMapLoad = useCallback(() => {
+    mapRef.current.on('move', () => {
+      console.log(mapRef.current?.getBounds()._ne);
+      console.log(mapRef.current?.getBounds()._sw);
+    });
+  }, []);
 
   return (
     <Map
@@ -63,8 +71,10 @@ export default function MapViewer(){
         zoom: 15.5, 
       }}
       maxBounds={bounds}
-      mapStyle="mapbox://styles/mapbox/dark-v11"
-    >
+      doubleClickZoom={false}
+      onLoad={onMapLoad}
+      mapStyle="mapbox://styles/alexstarosta/clp71tw2j012301qqbc7i101p"
+    > 
 
       {pins}
 
@@ -78,6 +88,7 @@ export default function MapViewer(){
           <LocationGraph locationName={popupInfo.location} />
         </Popup>
       )}
+
     </Map>
   );
 }

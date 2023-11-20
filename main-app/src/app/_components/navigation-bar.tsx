@@ -18,7 +18,10 @@ export default function NavigationBar() {
                         width={40}
                         height={40}
                     />
-                    <div className="font-semibold text-xl">UW Map</div>
+                    <div className="flex flex-row items-center gap-[4px]">
+                        <div className="font-semibold text-xl">UW</div>
+                        <div className="font-semibold text-xl text-[#58a9db]">Map</div>
+                    </div>
                 </div>
                 <div className="flex flex-row items-center gap-5 mr-6">
                     {
