@@ -13,10 +13,10 @@ lat_long = [(float(x), float(x)) for x in range(10)]
 count = [random.randrange(10, 100) for x in range(10)]
 
 timestamp = 1700086281.8461056
-for x in range(1000):
-    timestamp += random.randrange(10000, 15000)
+for x in range(10000):
+    timestamp += random.randrange(100000, 150000)
     for y in range(10):
-        timestamp += random.randrange(10, 1000)
+        timestamp += random.randrange(10000, 100000)
         count[y] = int(count[y] * (random.random() + 0.5)) + 1
         data = (y, timestamp, lat_long[y][0], lat_long[y][1], count[y])
         cur.execute("INSERT INTO device_data VALUES(?, ?, ?, ?, ?)", data)
