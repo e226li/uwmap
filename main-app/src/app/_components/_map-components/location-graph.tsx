@@ -57,15 +57,16 @@ function getData() {
     return data;
 }
 
-export default function LocationGraphLocationGraph({locationName}: {locationName: string}) {
+export default function LocationGraph({locationName}: {locationName: string}) {
 
     var [data, setData] = useState(getData());
+
     const currentHour = new Date().getHours();
     var message = "It's not very busy";
     if (data !== undefined && currentHour !== undefined) {
         const dataPoint = data[currentHour];
         if (dataPoint !== undefined) {
-            message = generateMessage(Math.floor((dataPoint.currentDensity / dataPoint.density) * 100)) ?? "It's not very busy";
+            message = generateMessage(Math.floor((dataPoint.currentDensity / dataPoint.density) * 100));
         }
     }
 

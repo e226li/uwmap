@@ -19,6 +19,7 @@
     "mapbox-gl": "^2.15.0",
     "maplibre-gl": "^3.6.1",
     "next": "^14.0.0",
+    "node-fetch": "^2.6.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-map-gl": "^7.1.6",

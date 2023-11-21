@@ -1,20 +1,62 @@
 [
     {
-        "id": 1,
+        "id": 0,
         "location": "Some Location",
         "latitude": 43.47,
         "longitude":-80.54
     },
     {
-        "id": 2,
+        "id": 1,
         "location": "Some Other Location",
         "latitude": 43.471,
         "longitude":-80.54
     },
     {
-        "id": 3,
+        "id": 2,
         "location": "Some Other Other Location",
         "latitude": 43.4702,
         "longitude":-80.542
+    },
+    {
+        "id": 3,
+        "location": "Some Location",
+        "latitude": 43.471,
+        "longitude":-80.542
+    },
+    {
+        "id": 4,
+        "location": "Some Other Location",
+        "latitude": 43.4712,
+        "longitude":-80.543
+    },
+    {
+        "id": 5,
+        "location": "Some Other Other Location",
+        "latitude": 43.469,
+        "longitude":-80.540
+    },
+    {
+        "id": 6,
+        "location": "Some Location",
+        "latitude": 43.471,
+        "longitude":-80.5401
+    },
+    {
+        "id": 7,
+        "location": "Some Other Location",
+        "latitude": 43.4719,
+        "longitude":-80.543
+    },
+    {
+        "id": 8,
+        "location": "Some Other Other Location",
+        "latitude": 43.47024,
+        "longitude":-80.5421
+    },
+    {
+        "id": 9,
+        "location": "Some Location",
+        "latitude": 43.468,
+        "longitude":-80.5402
     }
 ]
