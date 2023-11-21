@@ -77,7 +77,7 @@ async def get_density(api_key: str = Security(get_api_key)):
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
     for hour in range(24):
-        current_hour = (now_hour.hour - hour) % 24
+        current_hour = (now_hour.hour - hour - 1) % 24
         current_hour_epoch = now_hour.timestamp() + hour * 3600 * 1000
 
         query = "SELECT * FROM device_data WHERE timestamp >= :start AND timestamp <= :stop;"
@@ -96,9 +96,9 @@ async def get_density(api_key: str = Security(get_api_key)):
                 last_run_count[value['id']] = value['count']
 
         average[current_hour] = dict()
-        latest[current_hour] = dict()
         for device_id in data_sum.keys():
             average[current_hour][device_id] = data_sum[device_id] / data_num[device_id]
-            latest[current_hour][device_id] = last_run_count[device_id]
+            if current_hour == now_hour.hour:
+                latest[device_id] = last_run_count[device_id]
 
-    return {'average': average, 'latest': latest, 'current_hour': now_hour.hour}
+    return {'average': average, 'latest': latest, 'current_hour': now_hour.hour - 1}
