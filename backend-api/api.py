@@ -8,6 +8,7 @@ from fastapi.security import APIKeyHeader
 import yaml
 from databases import Database
 from pydantic import BaseModel
+from starlette.responses import RedirectResponse
 
 
 class Count(BaseModel):
@@ -51,7 +52,7 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
 
 @app.get("/")
 async def root():
-    return "alive"
+    return RedirectResponse("docs")
 
 
 @app.post("/data/", status_code=204)
