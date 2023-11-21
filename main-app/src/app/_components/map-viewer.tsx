@@ -7,6 +7,7 @@ import MapPin from './_map-components/map-pin';
 import LocationGraph from "./_map-components/location-graph";
 import LOCATIONS from "map-data/locations.json";
 import type {MapRef} from 'react-map-gl';
+import HeatmapPing from "./_map-components/heatmap-ping";
 
 export default function MapViewer(){
   
@@ -20,7 +21,7 @@ export default function MapViewer(){
   };
   
   const [popupInfo, setPopupInfo] = useState<LocationType | null>(null);
-  const mapRef = useRef<MapRef>();
+  const mapRef = useRef() as React.MutableRefObject<MapRef>;
 
   const pins = useMemo(
     () =>
@@ -29,7 +30,7 @@ export default function MapViewer(){
           key={`marker-${index}`}
           longitude={location.longitude}
           latitude={location.latitude}
-          anchor="top"
+          anchor="center"
           onClick={e => {
             e.originalEvent.stopPropagation();
             if (mapRef.current) {
@@ -49,17 +50,34 @@ export default function MapViewer(){
     []
   );
 
+  const [zoom, setZoom] = useState(15.5);
+
+  const onZoom = useCallback(() => {
+    const zoom = mapRef.current?.getZoom();
+    if (zoom) {
+      setZoom(zoom);
+    }
+  }, []);
+
+  const heatmapPings = LOCATIONS.map((location, index) => (
+        <Marker
+          key={`marker-${index}`}
+          longitude={location.longitude}
+          latitude={location.latitude}
+          anchor="center"
+          style={{position: "absolute", zIndex: -100}}
+        >
+          <HeatmapPing
+              radius={750}
+              zoom={zoom}
+          />
+        </Marker>
+      ));
+
   const defaultLongitude = -80.5424;
   const defaultLatitude = 43.4705;
   const distanceOut = 0.02;
   const bounds: [number, number, number, number] = [defaultLongitude - distanceOut, defaultLatitude - distanceOut, defaultLongitude + distanceOut, defaultLatitude + distanceOut];
-  
-  const onMapLoad = useCallback(() => {
-    mapRef.current.on('move', () => {
-      console.log(mapRef.current?.getBounds()._ne);
-      console.log(mapRef.current?.getBounds()._sw);
-    });
-  }, []);
 
   return (
     <Map
@@ -72,9 +90,11 @@ export default function MapViewer(){
       }}
       maxBounds={bounds}
       doubleClickZoom={false}
-      onLoad={onMapLoad}
+      onZoom={onZoom}
       mapStyle="mapbox://styles/alexstarosta/clp71tw2j012301qqbc7i101p"
     > 
+
+      {heatmapPings}
 
       {pins}
 

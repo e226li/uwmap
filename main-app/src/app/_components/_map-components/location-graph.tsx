@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Cell} from 'recharts';
 
 function generateMessage(densityPercentage: number) {
@@ -42,7 +43,6 @@ function generateMessage(densityPercentage: number) {
     return message;
 };
 
-//random array of data for testing
 function getData() {
     const data = Array.from({length: 24}, (_, i) => {
         const hour = i;
@@ -59,14 +59,15 @@ function getData() {
 
 export default function LocationGraphLocationGraph({locationName}: {locationName: string}) {
 
-    var data = getData();
+    var [data, setData] = useState(getData());
     const currentHour = new Date().getHours();
-
-    var densityPercentage = 0;
-    if (data[currentHour]?.currentDensity !== undefined && data[currentHour]?.density !== undefined && data[currentHour]?.density !== 0) {
-        densityPercentage = Math.floor((data[currentHour].currentDensity / data[currentHour].density) * 100);
+    var message = "It's not very busy";
+    if (data !== undefined && currentHour !== undefined) {
+        const dataPoint = data[currentHour];
+        if (dataPoint !== undefined) {
+            message = generateMessage(Math.floor((dataPoint.currentDensity / dataPoint.density) * 100)) ?? "It's not very busy";
+        }
     }
-    const message = generateMessage(densityPercentage);
 
     var barWidth = 400;
     if (screen.width < 768) {
