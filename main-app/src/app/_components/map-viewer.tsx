@@ -9,9 +9,7 @@ import LOCATIONS from "map-data/locations.json";
 import type {MapRef} from 'react-map-gl';
 import HeatmapPing from "./_map-components/heatmap-ping";
 
-export default function MapViewer(){
-  
-  const token = "pk.eyJ1IjoiYWxleHN0YXJvc3RhIiwiYSI6ImNscDNoYXlkZTBuZDEycXAybHB2ZXM4ZjYifQ.3R4AEyIcUG5fwlJLnrjXiw"
+export default function MapViewer({token} : {token: string | undefined}){
 
   type LocationType = {
     id: number;
