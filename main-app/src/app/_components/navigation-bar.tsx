@@ -13,14 +13,16 @@ export default function NavigationBar() {
             <div className="flex flex-row items-center justify-between h-full w-full">
                 <div className="flex flex-row items-center gap-5 ml-6">
                     <Image 
+                        className="w-auto h-auto"
                         src="/logo.webp"
                         alt="UW Map Logo"
                         width={40}
                         height={40}
+                        priority={true}
                     />
                     <div className="flex flex-row items-center gap-[4px]">
                         <div className="font-semibold text-xl">UW</div>
-                        <div className="font-semibold text-xl text-lightblue">Map</div>
+                        <div className="font-semibold text-xl bg-clip-text text-transparent bg-gradient-to-br from-lightblue to-blue-500">Map</div>
                     </div>
                 </div>
                 <div className="flex flex-row items-center gap-5 mr-6">

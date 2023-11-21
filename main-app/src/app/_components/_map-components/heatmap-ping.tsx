@@ -19,7 +19,7 @@ export default function HeatmapPing({radius, zoom} : {radius: number, zoom: numb
                 top: -pingRadius/2,
                 left: -pingRadius/2,
             }} 
-            className="rounded-full bg-lightblue z-[-100]"
+            className="rounded-full z-[-100] circle-gradient animate-medium-ping"
         />
     )
 }

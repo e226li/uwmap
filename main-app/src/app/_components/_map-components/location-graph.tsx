@@ -85,7 +85,7 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
             <div className='mb-4'>
                 <h1 className="text-2xl font-bold">{locationName}</h1>
                 <div className="flex flex-row items-center gap-2 my-1">
-                    <p className="text-sm bg-[#d63852] w-fit px-1 my-1 rounded-sm font-semibold">LIVE</p>
+                    <p className="text-sm bg-gradient-to-br from-[#d63852] to-red-800 w-fit px-1 my-1 rounded-sm font-semibold">LIVE</p>
                     <p className="text-sm italic text-gray-400">{message}</p>
                 </div>  
             </div>
@@ -128,7 +128,7 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
                     data.map((entry, index) => (
                         <Cell 
                             key={`cell-${index}`} 
-                            opacity={entry.hour === currentHour ? 0.1 : 1}
+                            opacity={entry.hour === currentHour ? 0.2 : 1}
                             fill={entry.hour === currentHour ? "#fff" : "#58a9db"}
                         />
                         ))
@@ -145,7 +145,7 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
                         <Cell 
                             key={`cell-${index}`} 
                             opacity={entry.hour === currentHour ? 1 : 0}
-                            className={entry.hour === currentHour ? "animate-pulse" : ""}
+                            className={entry.hour === currentHour ? "animate-pulse opacity-90" : ""}
                         />
                         ))
                     }

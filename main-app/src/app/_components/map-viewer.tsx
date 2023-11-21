@@ -68,7 +68,7 @@ export default function MapViewer(){
           style={{position: "absolute", zIndex: -100}}
         >
           <HeatmapPing
-              radius={750}
+              radius={550}
               zoom={zoom}
           />
         </Marker>
