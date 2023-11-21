@@ -56,13 +56,13 @@ async def root():
 
 
 @app.post("/data/", status_code=204)
-async def save_data(id: int, timestamp_unix_epoch: int, location: Location, device_count: Count,
+async def save_data(device_id: int, timestamp_unix_epoch: int, location: Location, device_count: Count,
                     api_key: str = Security(get_api_key)):
     corrected_device_count = int((device_count.bluetooth + device_count.wifi) / 0.7)
 
     # enforced types should mean no sql injection occurs
-    query = "INSERT INTO device_data VALUES(:id, :timestamp, :lat, :long, :count)"
-    values = {'id': id, 'timestamp': timestamp_unix_epoch, 'lat': location.lat, 'long': location.long,
+    query = "INSERT INTO device_data VALUES(:device_id, :timestamp, :lat, :long, :count)"
+    values = {'id': device_id, 'timestamp': timestamp_unix_epoch, 'lat': location.lat, 'long': location.long,
               'count': corrected_device_count}
 
     await database.execute(query=query, values=values)
@@ -76,7 +76,6 @@ async def get_density(api_key: str = Security(get_api_key)):
 
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
-    now_hour_epoch = now_hour.timestamp()
     for hour in range(24):
         current_hour = (now_hour.hour - hour) % 24
         current_hour_epoch = now_hour.timestamp() + hour * 3600 * 1000
@@ -96,10 +95,10 @@ async def get_density(api_key: str = Security(get_api_key)):
                 last_run_time[value['id']] = value['timestamp']
                 last_run_count[value['id']] = value['count']
 
-        average[hour] = dict()
-        latest[hour] = dict()
+        average[current_hour] = dict()
+        latest[current_hour] = dict()
         for device_id in data_sum.keys():
-            average[hour][device_id] = data_sum[device_id] / data_num[device_id]
-            latest[hour][device_id] = last_run_count[device_id]
+            average[current_hour][device_id] = data_sum[device_id] / data_num[device_id]
+            latest[current_hour][device_id] = last_run_count[device_id]
 
-    return {'average': average, 'latest': latest}
+    return {'average': average, 'latest': latest, 'current_hour': now_hour.hour}
