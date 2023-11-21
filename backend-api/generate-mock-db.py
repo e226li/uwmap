@@ -12,7 +12,7 @@ cur.execute("CREATE TABLE device_data(id, timestamp, lat, long, count)")
 lat_long = [(float(x), float(x)) for x in range(10)]
 count = [random.randrange(10, 100) for x in range(10)]
 
-timestamp = 1700086281.8461056
+timestamp = time.time() - 24*3600*1000
 for x in range(10000):
     timestamp += random.randrange(100000, 150000)
     for y in range(10):
