@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from typing import Tuple, NamedTuple
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Security, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
 import yaml
 from databases import Database
@@ -29,6 +30,20 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+origins = [
+    "https://uwmap.live",
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 api_key_header = APIKeyHeader(name="X-API-Key")
 
