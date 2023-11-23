@@ -64,3 +64,7 @@ popd
 ```
 
 View backend at [api.](https://api.uwmap.live) and frontend at [@.](https://uwmap.live).
+
+## Developing
+
+Documentation for the backend API is live at [api./docs](https://api.uwmap.live/docs).

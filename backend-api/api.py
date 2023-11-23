@@ -22,6 +22,12 @@ class Location(BaseModel):
     long: float
 
 
+class Density(BaseModel):
+    average: dict = dict()
+    latest: dict = dict()
+    current_hour: int = datetime.now().hour
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await database.connect()
@@ -85,9 +91,8 @@ async def save_data(device_id: int, timestamp_unix_epoch: int, location: Locatio
 
 
 @app.get("/get-density/")
-async def get_density(api_key: str = Security(get_api_key)):
-    average = dict()
-    latest = dict()
+async def get_density(api_key: str = Security(get_api_key)) -> Density:
+    density = Density()
 
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
@@ -110,10 +115,10 @@ async def get_density(api_key: str = Security(get_api_key)):
                 last_run_time[value['id']] = value['timestamp']
                 last_run_count[value['id']] = value['count']
 
-        average[current_hour] = dict()
+        density.average[current_hour] = dict()
         for device_id in data_sum.keys():
-            average[current_hour][device_id] = data_sum[device_id] / data_num[device_id]
+            density.average[current_hour][device_id] = data_sum[device_id] / data_num[device_id]
             if current_hour == now_hour.hour:
-                latest[device_id] = last_run_count[device_id]
+                density.latest[device_id] = last_run_count[device_id]
 
-    return {'average': average, 'latest': latest, 'current_hour': now_hour.hour - 1}
+    return density
