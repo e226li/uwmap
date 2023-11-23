@@ -1,3 +1,59 @@
 # UWMap
 
-Our wonderful SE101 project.
+A modern map for a modern campus.
+
+## Deployment
+
+Deployment server is running Debian latest.
+
+```bash
+$ pwd
+~/uwmap
+```
+
+Set up DNS:
+```dns
+uwmap.live.             300     IN      A       {ip}
+api.uwmap.live.         300     IN      CNAME   uwmap.live.
+```
+
+Get packages: 
+```bash
+apt update -y && apt upgrade -y
+apt install -y nginx python3 python3-pip
+```
+
+Get dependencies:
+```bash
+python3 -m pip install -r backend-api/requirements.txt
+npm install --prefix ./main-app
+```
+
+Set up reverse proxies:
+```bash
+cp {nginx-fastapi.conf,nginx-t3.conf} /etc/nginx/sites-available
+ln -s /etc/nginx/sites-available/{nginx-fastapi.conf,nginx-t3.conf}  /etc/nginx/sites-available/
+systemctl restart nginx
+```
+
+Generate secrets:
+```bash
+echo "- `openssl rand -hex 20`" >> backend-api/keys.yaml
+# TODO: generate secrets for npm app
+```
+
+Run backend-api:
+```bash
+pushd backend-api 
+TEST_ENV=0 uvicorn api:app
+popd
+```
+
+Run frontend:
+```bash
+pushd backend-api 
+npm run build && npm run start
+popd
+```
+
+View backend at [api.](https://api.uwmap.live) and frontend at [@.](https://uwmap.live).
