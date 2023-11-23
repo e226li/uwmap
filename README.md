@@ -20,7 +20,14 @@ api.uwmap.live.         300     IN      CNAME   uwmap.live.
 Get packages: 
 ```bash
 apt update -y && apt upgrade -y
-apt install -y nginx python3 python3-pip
+apt install -y nginx python3 python3-pip nodejs npm
+```
+
+Upgrade node and npm:
+```bash
+npm -g n
+n latest
+npm install -g npm@latest
 ```
 
 Get dependencies:
