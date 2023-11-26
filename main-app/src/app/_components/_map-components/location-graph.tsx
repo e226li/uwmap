@@ -65,7 +65,7 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
     if (data !== undefined && currentHour !== undefined) {
         const dataPoint = data[currentHour];
         if (dataPoint !== undefined) {
-            message = generateMessage(Math.floor((dataPoint.currentDensity / dataPoint.density) * 100)) ?? "It's not very busy";
+            message = generateMessage(Math.floor((dataPoint.currentDensity / dataPoint.density) * 100));
         }
     }
 
