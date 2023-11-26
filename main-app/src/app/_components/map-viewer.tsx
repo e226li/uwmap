@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState, useRef, useCallback} from "react";
+import { useMemo, useState, useRef, useCallback, useEffect} from "react";
 import Map, {Marker, Popup} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapPin from './_map-components/map-pin';
@@ -9,7 +9,20 @@ import LOCATIONS from "map-data/locations.json";
 import type {MapRef} from 'react-map-gl';
 import HeatmapPing from "./_map-components/heatmap-ping";
 
-export default function MapViewer({token} : {token: string | undefined}){
+// TODO: put interface definitions somewhere else?
+interface DensityData {
+  average: {
+    [id: string]: {
+      [id: string]: number
+    }
+  },
+  latest: {
+    [id: string]: number
+  },
+  current_hour: number
+}
+
+export default function MapViewer({token, apiKey} : {token: string | undefined, apiKey: string}){
 
   type LocationType = {
     id: number;
@@ -19,6 +32,8 @@ export default function MapViewer({token} : {token: string | undefined}){
   };
   
   const [popupInfo, setPopupInfo] = useState<LocationType | null>(null);
+  const [data, setData] = useState<DensityData>();
+  const [heatmapPings, setHeatmapPings] = useState<JSX.Element[]>([]);
   const mapRef = useRef() as React.MutableRefObject<MapRef>;
 
   const pins = useMemo(
@@ -48,6 +63,47 @@ export default function MapViewer({token} : {token: string | undefined}){
     []
   );
 
+// periodically fetch latest data from api
+useEffect(() => {
+  const interval = setInterval(async function() {
+    const res = await fetch('https://api.uwmap.live/get-density/', {headers: {'x-api-key': apiKey}});
+    const latestData: DensityData = await res.json();
+    setData(latestData);
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, [])
+
+// when new data is fetched, reset heatmap pings according to the new data
+useEffect(() => {
+  // make sure data exists
+  if (data?.latest) {
+    const updatedPings: JSX.Element[] = [];
+    
+    setHeatmapPings([]);
+  
+    LOCATIONS.forEach(location => {
+      updatedPings.push(
+        <Marker
+        key={`marker-${location.id}`}
+        longitude={location.longitude}
+        latitude={location.latitude}
+        anchor="center"
+        style={{position: "absolute", zIndex: -100}}
+      >
+        <HeatmapPing
+            radius={(data.latest[location.id] ?? 0 ) * 10} // if data doesn't exist for some reason, set radius 0
+            zoom={zoom}
+        />
+      </Marker>
+      )
+    })
+    
+    setHeatmapPings(updatedPings);
+  }
+
+}, [data])
+
   const [zoom, setZoom] = useState(15.5);
 
   const onZoom = useCallback(() => {
@@ -56,21 +112,6 @@ export default function MapViewer({token} : {token: string | undefined}){
       setZoom(zoom);
     }
   }, []);
-
-  const heatmapPings = LOCATIONS.map((location, index) => (
-        <Marker
-          key={`marker-${index}`}
-          longitude={location.longitude}
-          latitude={location.latitude}
-          anchor="center"
-          style={{position: "absolute", zIndex: -100}}
-        >
-          <HeatmapPing
-              radius={550}
-              zoom={zoom}
-          />
-        </Marker>
-      ));
 
   const defaultLongitude = -80.5424;
   const defaultLatitude = 43.4705;
