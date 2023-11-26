@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Cell} from 'recharts';
 
 function generateMessage(densityPercentage: number) {
-    var message = "";
+    let message = "";
     const currentHour = new Date().getHours();
 
     const densityMessages = {
@@ -46,9 +46,9 @@ function generateMessage(densityPercentage: number) {
 function getData() {
     const data = Array.from({length: 24}, (_, i) => {
         const hour = i;
-        var hour12 = (i % 12 || 12) + (i < 12 ? 'am' : 'pm');
-        var density = Math.floor(Math.random() * 100);
-        var currentDensity = 0;
+        const hour12 = (i % 12 || 12) + (i < 12 ? 'am' : 'pm');
+        const density = Math.floor(Math.random() * 100);
+        let currentDensity = 0;
         if (hour <= new Date().getHours()) {
             currentDensity = Math.floor(Math.random() * 100);
         }
@@ -59,9 +59,9 @@ function getData() {
 
 export default function LocationGraphLocationGraph({locationName}: {locationName: string}) {
 
-    var [data, setData] = useState(getData());
+    const [data, setData] = useState(getData());
     const currentHour = new Date().getHours();
-    var message = "It's not very busy";
+    let message = "It's not very busy";
     if (data !== undefined && currentHour !== undefined) {
         const dataPoint = data[currentHour];
         if (dataPoint !== undefined) {
@@ -69,13 +69,13 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
         }
     }
 
-    var barWidth = 400;
+    let barWidth = 400;
     if (screen.width < 768) {
-        data = data.filter((entry) => entry.hour < (currentHour + 12));
+        setData(data.filter((entry) => entry.hour < (currentHour + 12)));
         if (currentHour > 12) {
-            data = data.filter((entry) => entry.hour > (currentHour - 12 + (23 - currentHour)));
+            setData(data.filter((entry) => entry.hour > (currentHour - 12 + (23 - currentHour))));
         } else {
-            data = data.filter((entry) => entry.hour >= (currentHour));
+            setData(data.filter((entry) => entry.hour >= (currentHour)));
         }
         barWidth = 300; 
     }

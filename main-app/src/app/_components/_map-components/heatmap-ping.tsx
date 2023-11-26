@@ -3,7 +3,7 @@ const maxZoom =  22
 
 export default function HeatmapPing({radius, zoom} : {radius: number, zoom: number}) {
     
-    var pingRadius = radius;
+    let pingRadius = radius;
     const radiusMultiplier = ((1/(maxZoom - minZoom))*zoom) - (1/(maxZoom - minZoom)*minZoom);
     pingRadius = pingRadius * radiusMultiplier;
 
