@@ -2,7 +2,7 @@ import os
 import time
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Tuple, NamedTuple, List
+from typing import Tuple, NamedTuple, List, Dict
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Security, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,8 +19,15 @@ class Detected(BaseModel):
 
 
 class Density(BaseModel):
-    density: dict = dict()
     current_hour: int = datetime.now().hour
+
+
+class LatestDensity(BaseModel):
+    density: dict = dict()
+
+
+class AverageDensity(Density):
+    density: dict = dict.fromkeys(range(24), dict())
 
 
 @asynccontextmanager
@@ -30,7 +37,8 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 
-app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.0", contact={"email": "info@uwmap.info"})
+app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.0", contact={"name": "UWMap Team",
+                                                                              "email": "info@uwmap.live"})
 
 origins = [
     "https://uwmap.live",
@@ -92,8 +100,8 @@ async def save_data(device_id: int,  device_count: int, detected: Detected,
 
 
 @app.get("/get-average-density/")
-async def get_average_density(api_key: str = Security(get_api_key)) -> Density:
-    density = Density()
+async def get_average_density(api_key: str = Security(get_api_key)) -> AverageDensity:
+    density = AverageDensity()
 
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
@@ -115,8 +123,8 @@ async def get_average_density(api_key: str = Security(get_api_key)) -> Density:
 
 
 @app.get("/get-latest-density/")
-async def get_latest_density(api_key: str = Security(get_api_key)) -> Density:
-    density = Density()
+async def get_latest_density(api_key: str = Security(get_api_key)) -> LatestDensity:
+    density = LatestDensity()
 
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
