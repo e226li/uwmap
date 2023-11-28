@@ -22,7 +22,7 @@ class Density(BaseModel):
     current_hour: int = datetime.now().hour
 
 
-class LatestDensity(BaseModel):
+class LatestDensity(Density):
     density: dict = dict()
 
 
@@ -75,9 +75,9 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
 
 
 async def fetch_from_db(target_hour, now_hour):
-    current_hour_epoch = now_hour.timestamp() + target_hour * 3600 * 1000
+    current_hour_epoch = now_hour.timestamp() - (now_hour.hour - target_hour) % 24 * 3600
     query = "SELECT * FROM device_data WHERE timestamp >= :start AND timestamp <= :stop;"
-    values = {'start': current_hour_epoch, 'stop': current_hour_epoch + 3600 * 1000}
+    values = {'start': current_hour_epoch, 'stop': current_hour_epoch + 3600}
     return_values = await database.fetch_all(query=query, values=values)
     return return_values
 
@@ -106,7 +106,6 @@ async def get_average_density(api_key: str = Security(get_api_key)) -> AverageDe
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
     for hour in range(24):
-        current_hour = (now_hour.hour - hour - 1) % 24
         return_values = await fetch_from_db(hour, now_hour)
 
         data_sum = defaultdict(int)
@@ -115,9 +114,9 @@ async def get_average_density(api_key: str = Security(get_api_key)) -> AverageDe
             data_sum[value['id']] += value['count']
             data_num[value['id']] += 1
 
-        density.density[current_hour] = dict()
+        density.density[hour] = dict()
         for device_id in data_sum.keys():
-            density.density[current_hour][device_id] = data_sum[device_id] / data_num[device_id]
+            density.density[hour][device_id] = data_sum[device_id] / data_num[device_id]
 
     return density
 
@@ -129,7 +128,6 @@ async def get_latest_density(api_key: str = Security(get_api_key)) -> LatestDens
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
     for hour in range(24):
-        current_hour = (now_hour.hour - hour - 1) % 24
         return_values = await fetch_from_db(hour, now_hour)
 
         last_run_time = defaultdict(int)
@@ -140,7 +138,7 @@ async def get_latest_density(api_key: str = Security(get_api_key)) -> LatestDens
                 last_run_count[value['id']] = value['count']
 
         for device_id in last_run_time.keys():
-            if current_hour == now_hour.hour:
+            if hour == now_hour.hour:
                 density.density[device_id] = last_run_count[device_id]
 
     return density
