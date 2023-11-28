@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.0", contact={"email": "info@uwmap.info"})
 
 origins = [
     "https://uwmap.live",
