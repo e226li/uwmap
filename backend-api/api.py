@@ -138,7 +138,7 @@ async def get_latest_density(api_key: str = Security(get_api_key)) -> LatestDens
                 last_run_count[value['id']] = value['count']
 
         for device_id in last_run_time.keys():
-            if hour == now_hour.hour:
+            if hour == now_hour.hour - 1:
                 density.density[device_id] = last_run_count[device_id]
 
     return density
