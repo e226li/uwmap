@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Cell} from 'recharts';
 
+const denistyColors = [
+    "#45A9FDff",
+    "#6F85FEff",
+    "#816FFEff",
+    "#AE52B9ff",
+    "#E03057ff",
+]
+
 function generateMessage(densityPercentage: number) {
     let message = "";
     const currentHour = new Date().getHours();
@@ -62,10 +70,13 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
     const [data, setData] = useState(getData());
     const currentHour = new Date().getHours();
     let message = "It's not very busy";
+    let colorIntensity = 1;
     if (data !== undefined && currentHour !== undefined) {
         const dataPoint = data[currentHour];
         if (dataPoint !== undefined) {
             message = generateMessage(Math.floor((dataPoint.currentDensity / dataPoint.density) * 100));
+            colorIntensity = Math.floor(dataPoint.currentDensity / 15);
+            colorIntensity = Math.max(1, Math.min(colorIntensity, 5));
         }
     }
 
@@ -137,7 +148,7 @@ export default function LocationGraphLocationGraph({locationName}: {locationName
                 <Bar 
                     dataKey="currentDensity" 
                     xAxisId={2}
-                    fill="#d63852"
+                    fill={`${denistyColors[colorIntensity - 1]}`}
                     radius={[5, 5, 0, 0]}
                 >
                     {

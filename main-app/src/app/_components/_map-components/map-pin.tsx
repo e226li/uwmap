@@ -1,8 +1,19 @@
-export default function MapPin() {
+const densityColors = [
+    "#45A9FDff",
+    "#6F85FEff",
+    "#816FFEff",
+    "#AE52B9ff",
+    "#E03057ff",
+]
+
+export default function MapPin({density} : {density: number}) {
+
+    let colorIntensity = Math.floor(density / 15);
+    colorIntensity = Math.max(1, Math.min(colorIntensity, 5));
 
     const pinStyle = {
         cursor: 'pointer',
-        fill: '#58a9db',
+        fill: `${densityColors[colorIntensity - 1]}`,
         stroke: 'none'
     };
 
