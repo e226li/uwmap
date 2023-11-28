@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    @apply bg-darkbg text-white;
+}
+
+.mapboxgl-popup-close-button {
+    display: none
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+    display: none
+}
+
+.mapboxgl-popup-content {
+    @apply bg-darkbg rounded-lg drop-shadow-lg w-[90vw] self-center p-5 mt-10 md:scale-110 md:mt-12 md:w-auto !important;
+}
+
+.recharts-layer .recharts-cartesian-axis-tick > text > tspan {
+    fill: #fff !important;
+}
+
+.circle-gradient {
+    background: rgb(88,169,219);
+    background: -moz-radial-gradient(circle, rgba(88,169,219,1) 0%, rgba(36,37,39,1) 100%);
+    background: -webkit-radial-gradient(circle, rgba(88,169,219,1) 0%, rgba(36,37,39,1) 100%);
+    background: radial-gradient(circle, rgba(88,169,219,1) 0%, rgba(36,37,39,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#58a9db",endColorstr="#242527",GradientType=1);
+}
