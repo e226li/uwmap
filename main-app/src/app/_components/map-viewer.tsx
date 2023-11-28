@@ -11,12 +11,7 @@ import HeatmapPing from "./_map-components/heatmap-ping";
 
 // TODO: put interface definitions somewhere else?
 interface DensityData {
-  average: {
-    [id: string]: {
-      [id: string]: number
-    }
-  },
-  latest: {
+  density: {
     [id: string]: number
   },
   current_hour: number
@@ -34,39 +29,12 @@ export default function MapViewer({token, apiKey} : {token: string | undefined, 
   const [popupInfo, setPopupInfo] = useState<LocationType | null>(null);
   const [data, setData] = useState<DensityData>();
   const [heatmapPings, setHeatmapPings] = useState<JSX.Element[]>([]);
+  const [heatmapPins, setHeatmapPins] = useState<JSX.Element[]>([]);
   const mapRef = useRef() as React.MutableRefObject<MapRef>;
 
-  const pins = useMemo(
-    () =>
-      LOCATIONS.map((location, index) => (
-        <Marker
-          key={`marker-${index}`}
-          longitude={location.longitude}
-          latitude={location.latitude}
-          anchor="center"
-          onClick={e => {
-            e.originalEvent.stopPropagation();
-            if (mapRef.current) {
-              mapRef.current.flyTo({
-                center: [location.longitude, location.latitude - 0.0004],
-                duration: 1000,
-                zoom : 17,
-                essential: true
-              });
-            }
-            setPopupInfo(location);
-          }}
-        >
-          <MapPin />
-        </Marker>
-      )),
-    []
-  );
-
-// periodically fetch latest data from api
 useEffect(() => {
   const interval = setInterval(async function() {
-    const res = await fetch('https://api.uwmap.live/get-density/', {headers: {'x-api-key': apiKey}});
+    const res = await fetch('https://api.uwmap.live/get-latest-density/', {headers: {'x-api-key': apiKey}});
     const latestData: DensityData = await res.json();
     setData(latestData);
   }, 5000);
@@ -74,32 +42,58 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, [])
 
-// when new data is fetched, reset heatmap pings according to the new data
 useEffect(() => {
-  // make sure data exists
-  if (data?.latest) {
+  if (data?.density) {
     const updatedPings: JSX.Element[] = [];
+    const updatedPins: JSX.Element[] = [];
     
     setHeatmapPings([]);
+    setHeatmapPins([]);
   
     LOCATIONS.forEach(location => {
       updatedPings.push(
         <Marker
-        key={`marker-${location.id}`}
+        key={`ping-${location.id}`}
         longitude={location.longitude}
         latitude={location.latitude}
         anchor="center"
         style={{position: "absolute", zIndex: -100}}
       >
         <HeatmapPing
-            radius={(data.latest[location.id] ?? 0 ) * 10} // if data doesn't exist for some reason, set radius 0
+            density={(data.density[location.id] ?? 0)}
             zoom={zoom}
         />
       </Marker>
       )
     })
+
+    LOCATIONS.forEach(location => {
+      updatedPings.push(
+          <Marker
+            key={`pin-marker-${location.id}`}
+            longitude={location.longitude}
+            latitude={location.latitude}
+            anchor="center"
+            onClick={e => {
+              e.originalEvent.stopPropagation();
+              if (mapRef.current) {
+                mapRef.current.flyTo({
+                  center: [location.longitude, location.latitude - 0.0004],
+                  duration: 1000,
+                  zoom : 17,
+                  essential: true
+                });
+              }
+              setPopupInfo(location);
+            }}
+          >
+          <MapPin density={(data.density[location.id] ?? 0)} />
+          </Marker>
+        )
+    })
     
     setHeatmapPings(updatedPings);
+    setHeatmapPins(updatedPins);
   }
 
 }, [data])
@@ -135,7 +129,7 @@ useEffect(() => {
 
       {heatmapPings}
 
-      {pins}
+      {heatmapPins}
 
       {popupInfo && (
         <Popup

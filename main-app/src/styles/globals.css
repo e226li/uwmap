@@ -21,11 +21,3 @@ body {
 .recharts-layer .recharts-cartesian-axis-tick > text > tspan {
     fill: #fff !important;
 }
-
-.circle-gradient {
-    background: rgb(88,169,219);
-    background: -moz-radial-gradient(circle, rgba(88,169,219,1) 0%, rgba(36,37,39,1) 100%);
-    background: -webkit-radial-gradient(circle, rgba(88,169,219,1) 0%, rgba(36,37,39,1) 100%);
-    background: radial-gradient(circle, rgba(88,169,219,1) 0%, rgba(36,37,39,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#58a9db",endColorstr="#242527",GradientType=1);
-}
