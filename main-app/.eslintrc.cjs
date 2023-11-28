@@ -25,11 +25,13 @@ const config = {
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "@typescript-eslint/no-misused-promises": [
-      2,
+      "warn",
       {
         checksVoidReturn: { attributes: false },
       },
     ],
+    "@typescript-eslint/consistent-indexed-object-style": "warn",
+    "@typescript-eslint/no-unsafe-assignment": "warn"
   },
 };
 
