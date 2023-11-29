@@ -130,7 +130,7 @@ async def get_latest_density(api_key: str = Security(get_api_key)) -> LatestDens
     density = LatestDensity()
 
     now = datetime.now()
-    now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
+    now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=1)
     for hour in range(24):
         return_values = await fetch_from_db(hour, now_hour)
 
