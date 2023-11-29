@@ -13,8 +13,13 @@ from pydantic import BaseModel
 from starlette.responses import RedirectResponse
 
 
+class DeviceInfo(BaseModel):
+    mac: str
+    rssi: str
+
+
 class Detected(BaseModel):
-    device_info: List[Tuple[str, str]]
+    device_info: List[DeviceInfo]
 
 
 class Density(BaseModel):
