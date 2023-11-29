@@ -32,7 +32,7 @@ npm install -g npm@latest
 
 Get dependencies:
 ```bash
-python3 -m pip install -r backend-api/requirements.txt
+python3 -m pip install -r backend_api/requirements.txt
 npm install --prefix ./main-app
 ```
 
@@ -52,19 +52,19 @@ systemctl restart nginx
 
 Generate secrets:
 ```bash
-echo "- `openssl rand -hex 20`" >> backend-api/keys.yaml
+echo "- `openssl rand -hex 20`" >> backend_api/keys.yaml
 ```
 
 Run backend-api:
 ```bash
-pushd backend-api 
+pushd backend_api 
 TEST_ENV=0 uvicorn api:app
 popd
 ```
 
 Run frontend:
 ```bash
-pushd backend-api 
+pushd backend_api 
 npm run build && npm run start
 popd
 ```
