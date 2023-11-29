@@ -23,11 +23,8 @@ class Detected(BaseModel):
 
 
 class Density(BaseModel):
-    current_hour: int = datetime.now().hour
-
-
-class LatestDensity(Density):
     density: dict = dict()
+    current_hour: int = datetime.now().hour
 
 
 class AverageDensity(Density):
@@ -41,8 +38,7 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 
-app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.1", contact={"name": "UWMap Team",
-                                                                              "email": "info@uwmap.live"})
+app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.2", contact={"email": "info@uwmap.live"})
 
 origins = [
     "https://uwmap.live",
@@ -125,9 +121,24 @@ async def get_average_density(api_key: str = Security(get_api_key)) -> AverageDe
     return density
 
 
+@app.get("/get-average-density-transposed/")
+async def get_average_density_transposed(api_key: str = Security(get_api_key)) -> Density:
+    average_density = await get_average_density()
+    new_density = Density()
+
+    transposed_density_dict = defaultdict(dict)
+    for hour in average_density.density.keys():
+        for device_id in average_density.density[hour].keys():
+            transposed_density_dict[device_id][hour] = average_density.density[hour][device_id]
+
+    new_density.density = transposed_density_dict
+
+    return new_density
+
+
 @app.get("/get-latest-density/")
-async def get_latest_density(api_key: str = Security(get_api_key)) -> LatestDensity:
-    density = LatestDensity()
+async def get_latest_density(api_key: str = Security(get_api_key)) -> Density:
+    density = Density()
 
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=1)
