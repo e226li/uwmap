@@ -137,7 +137,7 @@ async def get_latest_density(api_key: str = Security(get_api_key)) -> LatestDens
         last_run_time = defaultdict(int)
         last_run_count = defaultdict(int)
         for value in return_values:
-            if value['timestamp'] > last_run_time[value['id']]:
+            if last_run_time[value['id']] < value['timestamp'] <= time.time():
                 last_run_time[value['id']] = value['timestamp']
                 last_run_count[value['id']] = value['count']
 
