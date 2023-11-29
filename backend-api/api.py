@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 
-app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.0", contact={"name": "UWMap Team",
+app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.1", contact={"name": "UWMap Team",
                                                                               "email": "info@uwmap.live"})
 
 origins = [
@@ -87,8 +87,8 @@ async def root():
     return RedirectResponse("docs")
 
 
-@app.post("/data/", status_code=204)
-async def save_data(device_id: int,  device_count: int, detected: Detected,
+@app.post("/send-data/", status_code=204)
+async def save_data(device_id: int,  device_count: int, detected: Detected = None,
                     api_key: str = Security(get_api_key)):
     # enforced types should mean no sql injection occurs
     query = "INSERT INTO device_data VALUES(:id, :timestamp, :lat, :long, :count)"
