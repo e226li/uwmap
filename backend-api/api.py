@@ -14,8 +14,7 @@ from starlette.responses import RedirectResponse
 
 
 class Detected(BaseModel):
-    mac: List[str]
-    rssi: List[str]
+    device_info: List[Tuple[str, str]]
 
 
 class Density(BaseModel):
