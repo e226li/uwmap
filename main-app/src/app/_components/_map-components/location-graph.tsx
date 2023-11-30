@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Cell} from 'recharts';
 
 const denistyColors = [
@@ -8,6 +8,12 @@ const denistyColors = [
     "#AE52B9ff",
     "#E03057ff",
 ]
+
+type AverageDensityData = {
+    hour: number,
+    hour12: string,
+    density: number
+  }
 
 function generateMessage(densityPercentage: number) {
     let message = "";
@@ -51,7 +57,7 @@ function generateMessage(densityPercentage: number) {
     return message;
 };
 
-function getData() {
+/*function getData() {
     const data = Array.from({length: 24}, (_, i) => {
         const hour = i;
         const hour12 = (i % 12 || 12) + (i < 12 ? 'am' : 'pm');
@@ -62,20 +68,42 @@ function getData() {
         }
         return { hour, hour12, density, currentDensity};
     });
+    
     return data;
-}
+}*/
 
-export default function LocationGraphLocationGraph({locationName}: {locationName: string}) {
+export default function LocationGraphLocationGraph({id, locationName, apiKey, currentDensity}: {id: number, locationName: string, apiKey: string, currentDensity: number}) {
+    const [data, setData] = useState<AverageDensityData[]>([]);     
 
-    const [data, setData] = useState(getData());
+    // get the average density data for past 24 hr of this device
+    useEffect(() => {
+    async function getData() {
+        const res = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
+        const resJson = await res.json();
+        console.log("resjson ", resJson.density[id]);
+        let data: AverageDensityData[] = [];
+    
+        for (let i = 0; i < 24; i++) {
+            data[i] = {
+                hour: i,
+                hour12: (i % 12 || 12) + (i < 12 ? 'am' : 'pm'),
+                density: resJson.density[id][i]
+            }
+        }
+        setData(data);
+    }
+    getData();
+  }, [])
+
     const currentHour = new Date().getHours();
     let message = "It's not very busy";
     let colorIntensity = 1;
+
     if (data !== undefined && currentHour !== undefined) {
-        const dataPoint = data[currentHour];
-        if (dataPoint !== undefined) {
-            message = generateMessage(Math.floor((dataPoint.currentDensity / dataPoint.density) * 100));
-            colorIntensity = Math.floor(dataPoint.currentDensity / 15);
+        const currentHourData = data[currentHour];
+        if (currentHourData !== undefined) {
+            message = generateMessage(Math.floor((currentDensity / currentHourData.density) * 100));
+            colorIntensity = Math.floor(currentDensity / 15);
             colorIntensity = Math.max(1, Math.min(colorIntensity, 5));
         }
     }
