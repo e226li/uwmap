@@ -92,7 +92,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
         setData(data);
     }
     getData();
-  }, [])
+  }, [id])
 
     const currentHour = new Date().getHours();
     let message = "It's not very busy";
