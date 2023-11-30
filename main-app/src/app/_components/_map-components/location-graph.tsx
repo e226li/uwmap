@@ -80,7 +80,6 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
     async function getData() {
         const res = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
         const resJson = await res.json();
-        console.log("resjson ", resJson.density[id]);
         let data: AverageDensityData[] = [];
     
         for (let i = 0; i < 24; i++) {
