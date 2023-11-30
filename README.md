@@ -64,7 +64,7 @@ popd
 
 Run frontend:
 ```bash
-pushd backend_api 
+pushd main-app 
 npm run build && npm run start
 popd
 ```
