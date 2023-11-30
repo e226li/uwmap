@@ -12,7 +12,8 @@ const denistyColors = [
 type AverageDensityData = {
     hour: number,
     hour12: string,
-    density: number
+    density: number,
+    currentDensity: number
   }
 
 function generateMessage(densityPercentage: number) {
@@ -57,55 +58,46 @@ function generateMessage(densityPercentage: number) {
     return message;
 };
 
-/*function getData() {
-    const data = Array.from({length: 24}, (_, i) => {
-        const hour = i;
-        const hour12 = (i % 12 || 12) + (i < 12 ? 'am' : 'pm');
-        const density = Math.floor(Math.random() * 100);
-        let currentDensity = 0;
-        if (hour <= new Date().getHours()) {
-            currentDensity = Math.floor(Math.random() * 100);
-        }
-        return { hour, hour12, density, currentDensity};
-    });
-    
-    return data;
-}*/
-
 export default function LocationGraphLocationGraph({id, locationName, apiKey, currentDensity}: {id: number, locationName: string, apiKey: string, currentDensity: number}) {
-    const [data, setData] = useState<AverageDensityData[]>([]);     
+    const [data, setData] = useState<AverageDensityData[]>([]);    
+    const [currentHour, setCurrentHour] = useState<number>(new Date().getHours()); 
+    const [colorIntensity, setColorIntensity] = useState<number>(Math.floor(currentDensity / 15)); 
+    const [message, setMessage] = useState<string>("It's not very busy");
 
-    // get the average density data for past 24 hr of this device
+    // fetch the average density data for past 24 hr of this device, updating everytime a differnet popup is opened
     useEffect(() => {
-    async function getData() {
-        const res = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
-        const resJson = await res.json();
-        let data: AverageDensityData[] = [];
-    
-        for (let i = 0; i < 24; i++) {
-            data[i] = {
-                hour: i,
-                hour12: (i % 12 || 12) + (i < 12 ? 'am' : 'pm'),
-                density: resJson.density[id][i]
+        async function getData() {
+            const res = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
+            const resJson = await res.json();
+            let data: AverageDensityData[] = [];
+        
+            for (let i = 0; i < 24; i++) {
+                data[i] = {
+                    hour: i,
+                    hour12: (i % 12 || 12) + (i < 12 ? 'am' : 'pm'),
+                    density: resJson.density[id][i],
+                    currentDensity: 0
+                }
+            }
+        setData(data);
+        }
+        getData();
+    }, [id])
+
+    // update pink bar live in graph via data that mapviewer fetches periodically
+    useEffect(() => {
+        if (data !== undefined && currentHour !== undefined) {
+            const currentHourData = data[currentHour];
+            if (currentHourData !== undefined) {
+                setMessage(generateMessage(Math.floor((currentDensity / currentHourData.density) * 100)));
+                const intensity = (Math.floor(currentDensity / 15));
+                setColorIntensity(Math.max(1, Math.min(intensity, 5)));
+
+                data[currentHour].currentDensity = currentDensity;
+                setData(data);
             }
         }
-        setData(data);
-    }
-    getData();
-  }, [id])
-
-    const currentHour = new Date().getHours();
-    let message = "It's not very busy";
-    let colorIntensity = 1;
-
-    if (data !== undefined && currentHour !== undefined) {
-        const currentHourData = data[currentHour];
-        if (currentHourData !== undefined) {
-            message = generateMessage(Math.floor((currentDensity / currentHourData.density) * 100));
-            colorIntensity = Math.floor(currentDensity / 15);
-            colorIntensity = Math.max(1, Math.min(colorIntensity, 5));
-        }
-    }
+      }, [currentDensity])
 
     let barWidth = 400;
     if (screen.width < 768) {
@@ -179,12 +171,12 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
                     radius={[5, 5, 0, 0]}
                 >
                     {
-                    data.map((entry, index) => (
-                        <Cell 
-                            key={`cell-${index}`} 
-                            opacity={entry.hour === currentHour ? 1 : 0}
-                            className={entry.hour === currentHour ? "animate-pulse opacity-90" : ""}
-                        />
+                        data.map((entry, index) => (
+                            <Cell 
+                                key={`cell-${index}`} 
+                                opacity={entry.hour === currentHour ? 1 : 0}
+                                className={entry.hour === currentHour ? "animate-pulse opacity-90" : ""}
+                            />
                         ))
                     }
                 </Bar>
