@@ -10,7 +10,7 @@ import type {MapRef} from 'react-map-gl';
 import HeatmapPing from "./_map-components/heatmap-ping";
 
 // TODO: put interface definitions somewhere else?
-interface DensityData {
+interface LatestDensityData {
   density: {
     [id: string]: number
   },
@@ -27,7 +27,7 @@ export default function MapViewer({token, apiKey} : {token: string | undefined, 
   };
   
   const [popupInfo, setPopupInfo] = useState<LocationType | null>(null);
-  const [data, setData] = useState<DensityData>();
+  const [latestData, setLatestData] = useState<LatestDensityData>();
   const [heatmapPings, setHeatmapPings] = useState<JSX.Element[]>([]);
   const [heatmapPins, setHeatmapPins] = useState<JSX.Element[]>([]);
   const mapRef = useRef() as React.MutableRefObject<MapRef>;
@@ -35,15 +35,15 @@ export default function MapViewer({token, apiKey} : {token: string | undefined, 
 useEffect(() => {
   const interval = setInterval(async function() {
     const res = await fetch('https://api.uwmap.live/get-latest-density/', {headers: {'x-api-key': apiKey}});
-    const latestData: DensityData = await res.json();
-    setData(latestData);
+    const latestData: LatestDensityData = await res.json();
+    setLatestData(latestData);
   }, 5000);
 
   return () => clearInterval(interval);
 }, [])
 
 useEffect(() => {
-  if (data?.density) {
+  if (latestData?.density) {
     const updatedPings: JSX.Element[] = [];
     const updatedPins: JSX.Element[] = [];
     
@@ -60,7 +60,7 @@ useEffect(() => {
         style={{position: "absolute", zIndex: -100}}
       >
         <HeatmapPing
-            density={(data.density[location.id] ?? 0)}
+            density={(latestData.density[location.id] ?? 0)}
             zoom={zoom}
         />
       </Marker>
@@ -87,7 +87,7 @@ useEffect(() => {
               setPopupInfo(location);
             }}
           >
-          <MapPin density={(data.density[location.id] ?? 0)} />
+          <MapPin density={(latestData.density[location.id] ?? 0)} />
           </Marker>
         )
     })
@@ -96,7 +96,7 @@ useEffect(() => {
     setHeatmapPins(updatedPins);
   }
 
-}, [data])
+}, [latestData])
 
   const [zoom, setZoom] = useState(15.5);
 
@@ -138,7 +138,12 @@ useEffect(() => {
           latitude={popupInfo.latitude}
           onClose={() => setPopupInfo(null)}
         >
-          <LocationGraph locationName={popupInfo.location} />
+          <LocationGraph
+            id={popupInfo.id}
+            locationName={popupInfo.location}
+            apiKey={apiKey}
+            currentDensity={latestData?.density[popupInfo.id] ?? 0} 
+          />
         </Popup>
       )}
 
