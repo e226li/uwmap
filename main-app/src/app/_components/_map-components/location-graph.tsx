@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { BarLoader } from 'react-spinners';
 import { BarChart, Bar, XAxis, YAxis, Cell} from 'recharts';
 
+const date = new Date();
+
 const densityColors = [
     "#45A9FDff",
     "#6F85FEff",
@@ -19,7 +21,7 @@ type AverageDensityData = {
 
 function generateMessage(densityPercentage: number) {
     let message = "";
-    const currentHour = new Date().getHours();
+    const currentHour = date.getHours();
 
     const densityMessages = {
         25: "It's not very busy",
@@ -90,6 +92,8 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
 
     // update pink bar live in graph via data that mapviewer fetches periodically
     useEffect(() => {
+        setCurrentHour(date.getHours());
+
         if (data[currentHour] && currentHour) {
             data[currentHour].currentDensity = currentDensity;
             setData(data);
