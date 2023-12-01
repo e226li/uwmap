@@ -6,9 +6,9 @@ const densityColors = [
     "#E03057ff",
 ]
 
-export default function MapPin({density} : {density: number}) {
+export default function MapPin({density, averageDensity} : {density: number, averageDensity: number}) {
 
-    let colorIntensity = Math.floor(density / 15);
+    let colorIntensity = (Math.floor(density / (averageDensity / 2)))
     colorIntensity = Math.max(1, Math.min(colorIntensity, 5));
 
     const pinStyle = {

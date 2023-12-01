@@ -9,14 +9,14 @@ const densityColors = [
     "#E03057ff",
 ]
 
-export default function HeatmapPing({density, zoom} : {density: number, zoom: number}) {
+export default function HeatmapPing({density, averageDensity, zoom} : {density: number, averageDensity: number, zoom: number}) {
 
     const opacity = (zoom - minZoom)/(maxZoom - minZoom) - 0.2;
     
-    let colorIntensity = Math.floor(density / 15);
+    let colorIntensity = (Math.floor(density / (averageDensity / 2)))
     colorIntensity = Math.max(1, Math.min(colorIntensity, 5));
 
-    let pingRadius = Math.log2(density) * 50;
+    let pingRadius = Math.log2(density + 1) * 30;
     const radiusMultiplier = ((1/(maxZoom - minZoom))*zoom) - (1/(maxZoom - minZoom)*minZoom);
     pingRadius = pingRadius * radiusMultiplier;
 

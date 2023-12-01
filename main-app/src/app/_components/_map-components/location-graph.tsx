@@ -17,7 +17,7 @@ type AverageDensityData = {
     hour12: string,
     density: number,
     currentDensity: number
-  }
+}
 
 function generateMessage(densityPercentage: number) {
     let message = "";
@@ -29,7 +29,7 @@ function generateMessage(densityPercentage: number) {
         75: "It's getting busy",
         100: "It's busy",
         125: "It's busier than usual",
-        150: "It's very busy",
+        150: "It's much busier than usual",
         175: "It's a lot busier than usual"
     }
 
@@ -67,7 +67,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
     const [colorIntensity, setColorIntensity] = useState<number>(Math.floor(currentDensity / 15)); 
     const [message, setMessage] = useState<string>("It's not very busy");
     const [loading, setLoading] = useState<boolean>(true);
-    
+
     // fetch the average density data for past 24 hr of this device, updating everytime a differnet popup is opened
     useEffect(() => {
         setLoading(true);
@@ -75,7 +75,6 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
             const res = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
             const resJson = await res.json();
             let data: AverageDensityData[] = [];
-        
             for (let i = 0; i < 24; i++) {
                 data[i] = {
                     hour: i,
@@ -93,15 +92,14 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
     // update pink bar live in graph via data that mapviewer fetches periodically
     useEffect(() => {
         setCurrentHour(date.getHours());
-
-        if (data[currentHour] && currentHour) {
+        if (data[currentHour] !== undefined && currentHour !== undefined) {
             data[currentHour].currentDensity = currentDensity;
             setData(data);
 
             const currentHourData = data[currentHour];
             if (currentHourData !== undefined) {
                 setMessage(generateMessage(Math.floor((currentDensity / currentHourData.density) * 100)));
-                const intensity = (Math.floor(currentDensity / 15));
+                const intensity = (Math.floor(currentDensity / (currentHourData.density / 2)));
                 setColorIntensity(Math.max(1, Math.min(intensity, 5)));
             }
         }
