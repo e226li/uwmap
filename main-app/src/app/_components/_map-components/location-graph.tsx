@@ -182,7 +182,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
                                 <Cell 
                                     key={`cell-${index}`} 
                                     opacity={entry.hour === currentHour ? 1 : 0}
-                                    className={entry.hour === currentHour ? "animate-pulse opacity-90" : ""}
+                                    className={entry.hour === currentHour ? "animate-pulse" : ""}
                                 />
                             ))
                         }
