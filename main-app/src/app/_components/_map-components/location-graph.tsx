@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Cell} from 'recharts';
 
-const denistyColors = [
+const densityColors = [
     "#45A9FDff",
     "#6F85FEff",
     "#816FFEff",
@@ -86,18 +86,18 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
 
     // update pink bar live in graph via data that mapviewer fetches periodically
     useEffect(() => {
-        if (data !== undefined && currentHour !== undefined) {
+        if (data[currentHour] && currentHour) {
+            data[currentHour].currentDensity = currentDensity;
+            setData(data);
+
             const currentHourData = data[currentHour];
             if (currentHourData !== undefined) {
                 setMessage(generateMessage(Math.floor((currentDensity / currentHourData.density) * 100)));
                 const intensity = (Math.floor(currentDensity / 15));
                 setColorIntensity(Math.max(1, Math.min(intensity, 5)));
-
-                data[currentHour].currentDensity = currentDensity;
-                setData(data);
             }
         }
-      }, [currentDensity])
+    }, [currentDensity, data])
 
     let barWidth = 400;
     if (screen.width < 768) {
@@ -167,7 +167,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
                 <Bar 
                     dataKey="currentDensity" 
                     xAxisId={2}
-                    fill={`${denistyColors[colorIntensity - 1]}`}
+                    fill={`${densityColors[colorIntensity - 1]}`}
                     radius={[5, 5, 0, 0]}
                 >
                     {
