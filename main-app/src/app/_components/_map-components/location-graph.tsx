@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BarLoader } from 'react-spinners';
 import { BarChart, Bar, XAxis, YAxis, Cell} from 'recharts';
 
 const densityColors = [
@@ -63,9 +64,11 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
     const [currentHour, setCurrentHour] = useState<number>(new Date().getHours()); 
     const [colorIntensity, setColorIntensity] = useState<number>(Math.floor(currentDensity / 15)); 
     const [message, setMessage] = useState<string>("It's not very busy");
-
+    const [loading, setLoading] = useState<boolean>(true);
+    
     // fetch the average density data for past 24 hr of this device, updating everytime a differnet popup is opened
     useEffect(() => {
+        setLoading(true);
         async function getData() {
             const res = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
             const resJson = await res.json();
@@ -80,6 +83,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
                 }
             }
         setData(data);
+        setLoading(false);
         }
         getData();
     }, [id])
@@ -119,7 +123,8 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
                     <p className="text-sm italic text-gray-400">{message}</p>
                 </div>  
             </div>
-            <BarChart
+            {!loading ?
+                <BarChart
                 style={{margin: 'auto'}}
                 width={barWidth}
                 height={200}
@@ -132,55 +137,56 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
                     left: 20,
                     bottom: 0,
                 }}
-            >
-                <XAxis 
-                    dataKey="hour12"
-                    padding="no-gap"
-                    interval={2}
-                    tickMargin={3}
-                    scale="band"
-                    tickLine={true}
-                    axisLine={true}
-                    xAxisId={1}
-                />
-                <XAxis 
-                    xAxisId={2}
-                    hide={true}
-                />
-                <Bar 
-                    dataKey="density" 
-                    stackId="a" 
-                    xAxisId={1}
-                    fill="#58a9db"
-                    radius={[5, 5, 0, 0]}
                 >
-                    {
-                    data.map((entry, index) => (
-                        <Cell 
-                            key={`cell-${index}`} 
-                            opacity={entry.hour === currentHour ? 0.2 : 1}
-                            fill={entry.hour === currentHour ? "#fff" : "#58a9db"}
-                        />
-                        ))
-                    }
-                </Bar>
-                <Bar 
-                    dataKey="currentDensity" 
-                    xAxisId={2}
-                    fill={`${densityColors[colorIntensity - 1]}`}
-                    radius={[5, 5, 0, 0]}
-                >
-                    {
+                    <XAxis 
+                        dataKey="hour12"
+                        padding="no-gap"
+                        interval={2}
+                        tickMargin={3}
+                        scale="band"
+                        tickLine={true}
+                        axisLine={true}
+                        xAxisId={1}
+                    />
+                    <XAxis 
+                        xAxisId={2}
+                        hide={true}
+                    />
+                    <Bar 
+                        dataKey="density" 
+                        stackId="a" 
+                        xAxisId={1}
+                        fill="#58a9db"
+                        radius={[5, 5, 0, 0]}
+                    >
+                        {
                         data.map((entry, index) => (
                             <Cell 
                                 key={`cell-${index}`} 
-                                opacity={entry.hour === currentHour ? 1 : 0}
-                                className={entry.hour === currentHour ? "animate-pulse opacity-90" : ""}
+                                opacity={entry.hour === currentHour ? 0.2 : 1}
+                                fill={entry.hour === currentHour ? "#fff" : "#58a9db"}
                             />
-                        ))
-                    }
-                </Bar>
-            </BarChart>
+                            ))
+                        }
+                    </Bar>
+                    <Bar 
+                        dataKey="currentDensity" 
+                        xAxisId={2}
+                        fill={`${densityColors[colorIntensity - 1]}`}
+                        radius={[5, 5, 0, 0]}
+                    >
+                        {
+                            data.map((entry, index) => (
+                                <Cell 
+                                    key={`cell-${index}`} 
+                                    opacity={entry.hour === currentHour ? 1 : 0}
+                                    className={entry.hour === currentHour ? "animate-pulse opacity-90" : ""}
+                                />
+                            ))
+                        }
+                    </Bar>
+                </BarChart> :  <BarLoader color="#58a9db"/>
+            }
         </div>
     )
 }
