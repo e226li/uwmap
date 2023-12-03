@@ -8,6 +8,6 @@ con = sqlite3.connect("device-data.db")
 cur = con.cursor()
 
 cur.execute("CREATE TABLE device_data(id, timestamp, lat, long, count)")
-cur.execute("CREATE INDEX timestamp ON device_data(id, timestamp, lat, long, count)")
+cur.execute("CREATE INDEX timestamp_idx ON device_data(timestamp)")
 
 con.commit()

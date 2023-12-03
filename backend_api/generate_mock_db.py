@@ -8,7 +8,7 @@ con = sqlite3.connect("mock-backend.db")
 cur = con.cursor()
 
 cur.execute("CREATE TABLE device_data(id, timestamp, lat, long, count)")
-cur.execute("CREATE INDEX timestamp ON device_data(id, timestamp, lat, long, count)")
+cur.execute("CREATE INDEX timestamp_idx ON device_data(timestamp)")
 
 lat_long = [(float(x), float(x)) for x in range(10)]
 count = [random.randrange(10, 100) for x in range(10)]
