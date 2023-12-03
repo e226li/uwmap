@@ -14,8 +14,13 @@ export default function MapPin({density, averageDensity} : {density: number, ave
     const pinStyle = {
         cursor: 'pointer',
         fill: `${densityColors[colorIntensity - 1]}`,
-        stroke: 'none'
+        stroke: 'none',
+        opacity: 1,
     };
+
+    if (Number.isNaN(colorIntensity)) {
+        pinStyle.opacity = 0;
+    }
 
     return (
         <svg viewBox="0 0 24 24" height={20} style={pinStyle}>

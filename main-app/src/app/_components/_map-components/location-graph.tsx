@@ -32,6 +32,10 @@ function generateMessage(densityPercentage: number) {
     let message = "";
     const currentHour = date.getHours();
 
+    if (densityPercentage > 90000 || Number.isNaN(densityPercentage)) {
+        message = "It's a little misleading right now";
+    }
+
     const densityMessages = {
         25: "It's not very busy",
         50: "It's a little busy",
@@ -58,7 +62,7 @@ function generateMessage(densityPercentage: number) {
 
     if (message === "") {
         message = "It's really busier than usual";
-    }
+    } 
 
     for (const [key, value] of Object.entries(timeMessages)) {
         if (currentHour < parseInt(key)) {
@@ -74,7 +78,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
     const [data, setData] = useState<AverageDensityData[]>([]);    
     const [currentHour, setCurrentHour] = useState<number>(new Date().getHours()); 
     const [colorIntensity, setColorIntensity] = useState<number>(Math.floor(currentDensity / 15)); 
-    const [message, setMessage] = useState<string>("It's not very busy");
+    const [message, setMessage] = useState<string>("Loading...");
     const [loading, setLoading] = useState<boolean>(true);
 
     // fetch the average density data for past 24 hr of this device, updating everytime a differnet popup is opened

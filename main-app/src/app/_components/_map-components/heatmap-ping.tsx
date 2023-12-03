@@ -19,7 +19,7 @@ export default function HeatmapPing({density, averageDensity, zoom} : {density: 
     let pingRadius = Math.log2(density + 1) * 30;
     const radiusMultiplier = ((1/(maxZoom - minZoom))*zoom) - (1/(maxZoom - minZoom)*minZoom);
     pingRadius = pingRadius * radiusMultiplier;
-
+    
     return (
         <div 
             style={{
