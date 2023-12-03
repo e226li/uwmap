@@ -4,14 +4,14 @@ import NavigationBar from "../_components/navigation-bar";
 import Image from 'next/image'
 import { Suspense, useEffect, useState } from "react";
 
-export function getAge(now) {
-  var hours = 1000 * 60 * 60;
+function getAge(now: Date): number {
+  const hours = 1000 * 60 * 60;
 
-  var date1 = new Date("2023-10-30");
-  var date2 = now;
-  var timeDiff = date2.getTime() - date1.getTime();
-  var diff = timeDiff / hours;
-  diff = parseFloat(Math.round(diff * 1000000000) / 1000000000).toFixed(7);
+  const date1 = new Date("2023-10-30");
+  const date2 = now;
+  const timeDiff = date2.getTime() - date1.getTime();
+  let diff = timeDiff / hours;
+  diff = parseFloat((Math.round(diff * 1000000000) / 1000000000).toFixed(7));
   return diff;
 }
 

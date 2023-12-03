@@ -31,7 +31,8 @@ const config = {
       },
     ],
     "@typescript-eslint/consistent-indexed-object-style": "warn",
-    "@typescript-eslint/no-unsafe-assignment": "warn"
+    "@typescript-eslint/no-unsafe-assignment": "warn",
+    "@typescript-eslint/prefer-nullish-coalescing": "off"
   },
 };
 

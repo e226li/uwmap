@@ -17,6 +17,15 @@ interface LatestDensityData {
   current_hour: number
 }
 
+interface AverageDensityData {
+  density: {
+    [id: string]: {
+      [id: string]: number
+    }
+  },
+  current_hour: number
+}
+
 export default function MapViewer({token, apiKey} : {token: string | undefined, apiKey: string}){
 
   type LocationType = {
@@ -28,16 +37,16 @@ export default function MapViewer({token, apiKey} : {token: string | undefined, 
   
   const [popupInfo, setPopupInfo] = useState<LocationType | null>(null);
   const [latestData, setLatestData] = useState<LatestDensityData>();
-  const [currentHour, setCurrentHour] = useState<Number>(new Date().getHours());
+  const [currentHour, setCurrentHour] = useState<number>(new Date().getHours());
   const [heatmapPings, setHeatmapPings] = useState<JSX.Element[]>([]);
   const [heatmapPins, setHeatmapPins] = useState<JSX.Element[]>([]);
-  const mapRef = useRef() as React.MutableRefObject<MapRef>;
-  const [averageDensityData, setAverageDensityData] = useState<LatestDensityData>();
+  const mapRef = useRef<MapRef>();
+  const [averageDensityData, setAverageDensityData] = useState<AverageDensityData>();
 
 useEffect(() => {
   const interval = setInterval(async function() {
     const resAvg = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
-    const resJson: LatestDensityData = await resAvg.json();
+    const resJson: AverageDensityData = await resAvg.json();
     setAverageDensityData(resJson);
 
     const res = await fetch('https://api.uwmap.live/get-latest-density/', {headers: {'x-api-key': apiKey}});
@@ -56,6 +65,12 @@ useEffect(() => {
     setHeatmapPins([]);
   
     LOCATIONS.forEach(location => {
+      // account for null data
+      let currentHourDensity = 0;
+      if (averageDensityData.density[location.id]) {
+        currentHourDensity = averageDensityData.density[location.id]![currentHour] ?? 0;
+      }
+      
       updatedPings.push(
         <Marker
         key={`ping-${location.id}`}
@@ -66,7 +81,7 @@ useEffect(() => {
       >
         <HeatmapPing
             density={(latestData.density[location.id] ?? 0)}
-            averageDensity={(averageDensityData.density[location.id][currentHour] ?? 0)}
+            averageDensity={currentHourDensity}
             zoom={zoom}
         />
       </Marker>
@@ -74,6 +89,12 @@ useEffect(() => {
     })
 
     LOCATIONS.forEach(location => {
+      // account for null data
+      let currentHourDensity = 0;
+      if (averageDensityData.density[location.id]) {
+        currentHourDensity = averageDensityData.density[location.id]![currentHour] ?? 0;
+      }
+      
       updatedPings.push(
           <Marker
             key={`pin-marker-${location.id}`}
@@ -93,7 +114,7 @@ useEffect(() => {
               setPopupInfo(location);
             }}
           >
-          <MapPin density={(latestData.density[location.id] ?? 0)} averageDensity={(averageDensityData.density[location.id][currentHour] ?? 0)} />
+          <MapPin density={(latestData.density[location.id] ?? 0)} averageDensity={currentHourDensity} />
           </Marker>
         )
     })
@@ -120,6 +141,7 @@ useEffect(() => {
 
   return (
     <Map
+    // @ts-expect-error mapref is annoying
       ref={mapRef}
       mapboxAccessToken={token}
       initialViewState={{

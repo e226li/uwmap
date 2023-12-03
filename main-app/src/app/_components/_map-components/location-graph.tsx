@@ -19,6 +19,15 @@ type AverageDensityData = {
     currentDensity: number
 }
 
+interface AverageDensityTransposed {
+    "density": {
+        [id: string]: {
+            [id: string]: number
+        }
+    },
+    "current_hour": number
+}
+
 function generateMessage(densityPercentage: number) {
     let message = "";
     const currentHour = date.getHours();
@@ -73,27 +82,35 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
         setLoading(true);
         async function getData() {
             const res = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
-            const resJson = await res.json();
-            let data: AverageDensityData[] = [];
+            const resJson: AverageDensityTransposed = await res.json();
+            
+            const data: AverageDensityData[] = [];
             for (let i = 0; i < 24; i++) {
+                // account for null data
+                let density = 0;
+                if (resJson.density[id]) {
+                    density = resJson.density[id]![i] ?? 0;
+                }
+
                 data[i] = {
                     hour: i,
                     hour12: (i % 12 || 12) + (i < 12 ? 'am' : 'pm'),
-                    density: resJson.density[id][i] ?? 0,
+                    density: density,
                     currentDensity: 0
                 }
             }
         setData(data);
         setLoading(false);
         }
-        getData();
+        getData()
+            .catch(err => {console.log(err)});
     }, [id])
 
     // update pink bar live in graph via data that mapviewer fetches periodically
     useEffect(() => {
         setCurrentHour(date.getHours());
         if (data[currentHour] !== undefined && currentHour !== undefined) {
-            data[currentHour].currentDensity = currentDensity;
+            data[currentHour]!.currentDensity = currentDensity;
             setData(data);
 
             const currentHourData = data[currentHour];
