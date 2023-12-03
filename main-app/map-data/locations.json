@@ -36,6 +36,12 @@
         "longitude":-80.5402019314242
     },
     {
+        "id": 6,
+        "location": "V1 N1",
+        "latitude": 43.47217510, 
+        "longitude":-80.55019770
+    },
+    {
         "id": 7,
         "location": "MC",
         "latitude": 43.47214941468885,
