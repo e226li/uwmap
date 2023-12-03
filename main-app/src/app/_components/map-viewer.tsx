@@ -28,22 +28,27 @@ export default function MapViewer({token, apiKey} : {token: string | undefined, 
   
   const [popupInfo, setPopupInfo] = useState<LocationType | null>(null);
   const [latestData, setLatestData] = useState<LatestDensityData>();
+  const [currentHour, setCurrentHour] = useState<Number>(new Date().getHours());
   const [heatmapPings, setHeatmapPings] = useState<JSX.Element[]>([]);
   const [heatmapPins, setHeatmapPins] = useState<JSX.Element[]>([]);
   const mapRef = useRef() as React.MutableRefObject<MapRef>;
+  const [averageDensityData, setAverageDensityData] = useState<LatestDensityData>();
 
 useEffect(() => {
   const interval = setInterval(async function() {
+    const resAvg = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
+    const resJson: LatestDensityData = await resAvg.json();
+    setAverageDensityData(resJson);
+
     const res = await fetch('https://api.uwmap.live/get-latest-density/', {headers: {'x-api-key': apiKey}});
     const latestData: LatestDensityData = await res.json();
     setLatestData(latestData);
   }, 5000);
-
   return () => clearInterval(interval);
 }, [])
 
 useEffect(() => {
-  if (latestData?.density) {
+  if (latestData?.density && averageDensityData?.density) {
     const updatedPings: JSX.Element[] = [];
     const updatedPins: JSX.Element[] = [];
     
@@ -61,6 +66,7 @@ useEffect(() => {
       >
         <HeatmapPing
             density={(latestData.density[location.id] ?? 0)}
+            averageDensity={(averageDensityData.density[location.id][currentHour] ?? 0)}
             zoom={zoom}
         />
       </Marker>
@@ -87,7 +93,7 @@ useEffect(() => {
               setPopupInfo(location);
             }}
           >
-          <MapPin density={(latestData.density[location.id] ?? 0)} />
+          <MapPin density={(latestData.density[location.id] ?? 0)} averageDensity={(averageDensityData.density[location.id][currentHour] ?? 0)} />
           </Marker>
         )
     })
