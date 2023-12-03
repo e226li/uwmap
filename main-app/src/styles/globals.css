@@ -21,3 +21,8 @@ body {
 .recharts-layer .recharts-cartesian-axis-tick > text > tspan {
     fill: #fff !important;
 }
+
+.nextjs-toast-errors-parent {
+    display: none !important;
+    opacity: 0 !important;
+}
