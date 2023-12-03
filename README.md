@@ -25,7 +25,7 @@ apt install -y nginx python3 python3-pip nodejs npm certbot
 
 Upgrade node, npm, and set up PM2:
 ```bash
-npm -g n
+npm install -g n
 n latest
 npm install -g npm@latest
 npm install -g pm2
