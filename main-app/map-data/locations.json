@@ -12,6 +12,12 @@
         "longitude":-80.53989477574922 
     },
     {
+        "id": 2,
+        "location": "V1 E1",
+        "latitude": 43.47176555482046, 
+        "longitude":-80.54935654657577
+    },
+    {
         "id": 3,
         "location": "DC SE Lab",
         "latitude": 43.47246767651742, 
