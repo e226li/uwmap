@@ -79,7 +79,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
                 data[i] = {
                     hour: i,
                     hour12: (i % 12 || 12) + (i < 12 ? 'am' : 'pm'),
-                    density: resJson.density[id][i],
+                    density: resJson.density[id][i] ?? 0,
                     currentDensity: 0
                 }
             }
