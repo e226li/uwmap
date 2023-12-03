@@ -11,7 +11,7 @@ function getAge(now: Date): number {
   const date2 = now;
   const timeDiff = date2.getTime() - date1.getTime();
   let diff = timeDiff / hours;
-  diff = parseFloat((Math.round(diff * 1000000000) / 1000000000).toFixed(10));
+  diff = parseFloat((Math.round(diff * 1000000000) / 1000000000).toFixed(7));
   return diff;
 }
 
