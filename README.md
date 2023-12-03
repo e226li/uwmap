@@ -23,11 +23,13 @@ apt update -y && apt upgrade -y
 apt install -y nginx python3 python3-pip nodejs npm certbot
 ```
 
-Upgrade node and npm:
+Upgrade node, npm, and set up PM2:
 ```bash
 npm -g n
 n latest
 npm install -g npm@latest
+npm install -g pm2
+pm2 startup
 ```
 
 Get dependencies:
@@ -52,21 +54,27 @@ systemctl restart nginx
 
 Generate secrets:
 ```bash
-echo "- `openssl rand -hex 20`" >> backend_api/keys.yaml
+echo "- `openssl rand -hex 20`" | tee -a backend_api/keys.yaml
 ```
 
-Run backend-api:
+Run backend_api:
 ```bash
 pushd backend_api 
-TEST_ENV=0 uvicorn api:app
+pm2 start "TEST_ENV=0 uvicorn api:app" --name backend_api
 popd
 ```
 
 Run frontend:
 ```bash
 pushd main-app 
-npm run build && npm run start
+npm run build
+pm2 start npm --name "frontend" -- start
 popd
+```
+
+Enable automatic startup after reboot:
+```bash
+pm2 save
 ```
 
 View backend at [api.](https://api.uwmap.live) and frontend at [@.](https://uwmap.live).
