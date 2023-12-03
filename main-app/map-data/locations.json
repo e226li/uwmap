@@ -1,62 +1,38 @@
 [
     {
         "id": 0,
-        "location": "Some Location",
-        "latitude": 43.47,
-        "longitude":-80.54
+        "location": "RCH",
+        "latitude": 43.47034992121662, 
+        "longitude":-80.54058548708272
     },
     {
         "id": 1,
-        "location": "Some Other Location",
-        "latitude": 43.471,
-        "longitude":-80.54
-    },
-    {
-        "id": 2,
-        "location": "Some Other Other Location",
-        "latitude": 43.4702,
-        "longitude":-80.542
+        "location": "E5",
+        "latitude": 43.47267889674192, 
+        "longitude":-80.53989477574922 
     },
     {
         "id": 3,
-        "location": "Some Location",
-        "latitude": 43.471,
-        "longitude":-80.542
+        "location": "DC SE Lab",
+        "latitude": 43.47246767651742, 
+        "longitude":-80.54210960828448
     },
     {
         "id": 4,
-        "location": "Some Other Location",
-        "latitude": 43.4712,
-        "longitude":-80.543
+        "location": "E2",
+        "latitude": 43.470896932765825, 
+        "longitude":-80.54010683580242
     },
     {
         "id": 5,
-        "location": "Some Other Other Location",
-        "latitude": 43.469,
-        "longitude":-80.540
-    },
-    {
-        "id": 6,
-        "location": "Some Location",
-        "latitude": 43.471,
-        "longitude":-80.5401
+        "location": "E3",
+        "latitude": 43.47159400343551, 
+        "longitude":-80.5402019314242
     },
     {
         "id": 7,
-        "location": "Some Other Location",
-        "latitude": 43.4719,
-        "longitude":-80.543
-    },
-    {
-        "id": 8,
-        "location": "Some Other Other Location",
-        "latitude": 43.47024,
-        "longitude":-80.5421
-    },
-    {
-        "id": 9,
-        "location": "Some Location",
-        "latitude": 43.468,
-        "longitude":-80.5402
+        "location": "MC",
+        "latitude": 43.47214941468885,
+        "longitude":-80.54394884115378
     }
 ]
