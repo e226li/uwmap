@@ -33,7 +33,7 @@ function generateMessage(densityPercentage: number) {
     const currentHour = date.getHours();
 
     if (densityPercentage > 90000 || Number.isNaN(densityPercentage)) {
-        message = "It's a little misleading right now";
+        message = "We are having trouble getting the data for this location";
     }
 
     const densityMessages = {
@@ -142,7 +142,11 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
             <div className='mb-4'>
                 <h1 className="text-2xl font-bold">{locationName}</h1>
                 <div className="flex flex-row items-center gap-2 my-1">
-                    <p className="text-sm bg-gradient-to-br from-[#d63852] to-red-800 w-fit px-1 my-1 rounded-sm font-semibold">LIVE</p>
+                    {   currentDensity ?
+                        <p className="text-sm bg-gradient-to-br from-[#d63852] to-red-800 w-fit px-1 my-1 rounded-sm font-semibold">LIVE</p>
+                            :
+                        <p className="text-sm bg-gradient-to-br from-gray-600 to-gray-800 w-fit px-1 my-1 rounded-sm font-semibold">ERR</p>
+                    }
                     <p className="text-sm italic text-gray-400">{message}</p>
                 </div>  
             </div>
