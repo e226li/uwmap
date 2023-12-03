@@ -11,7 +11,7 @@ function getAge(now: Date): number {
   const date2 = now;
   const timeDiff = date2.getTime() - date1.getTime();
   let diff = timeDiff / hours;
-  diff = parseFloat((Math.round(diff * 1000000000) / 1000000000).toFixed(7));
+  diff = parseFloat((Math.round(diff * 1000000000) / 1000000000).toFixed(10));
   return diff;
 }
 
@@ -25,6 +25,10 @@ export default function Home() {
     }, 50);
     return () => clearInterval(interval);
   }, []);
+
+  const formatter = new Intl.NumberFormat('en-US', { 
+    minimumFractionDigits: 6
+  })
 
   return (
     <div className="w-[100vw] h-[100vh] overflow-hidden">
@@ -51,7 +55,7 @@ export default function Home() {
         <div className="flex flex-row justify-center items-center gap-2">
           <div className="text-lg">A project</div>
           <code className="font-mono bg-clip-text text-transparent bg-gradient-to-br from-lightblue to-blue-500">
-            <Suspense fallback={null}>{getAge(time)}</Suspense>
+            <Suspense fallback={null}>{formatter.format(getAge(time))}</Suspense>
           </code>
           <div className="text-lg">hours in the making, made by</div>
         </div>
