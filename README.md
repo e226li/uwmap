@@ -48,7 +48,7 @@ systemctl start nginx
 Set up reverse proxies:
 ```bash
 cp {nginx-fastapi.conf,nginx-t3.conf} /etc/nginx/sites-available
-ln -s /etc/nginx/sites-available/{nginx-fastapi.conf,nginx-t3.conf}  /etc/nginx/sites-available/
+ln -s /etc/nginx/sites-available/{nginx-fastapi.conf,nginx-t3.conf}  /etc/nginx/sites-enabled/
 systemctl restart nginx
 ```
 
