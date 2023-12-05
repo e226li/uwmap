@@ -55,7 +55,8 @@ useEffect(() => {
     }
 
     // run immediately to make pins load immediately on load
-    fetchData();
+    fetchData()
+        .catch(e => console.log(e));
     const interval = setInterval(() => fetchData(), 5000);
     
     return () => clearInterval(interval);

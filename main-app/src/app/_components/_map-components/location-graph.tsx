@@ -43,7 +43,7 @@ function cyrb128(str : string) {
     h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
     h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
     h1 ^= (h2 ^ h3 ^ h4), h2 ^= h1, h3 ^= h1, h4 ^= h1;
-    let str1 = (h1 >>> 0).toString(4).slice(0, 1) + (h2 >>> 0).toString(4).slice(0, 1) + (h3 >>> 0).toString(4).slice(0, 1) + (h4 >>> 0).toString(4).slice(0, 1);
+    const str1 = (h1 >>> 0).toString(4).slice(0, 1) + (h2 >>> 0).toString(4).slice(0, 1) + (h3 >>> 0).toString(4).slice(0, 1) + (h4 >>> 0).toString(4).slice(0, 1);
     return str1;
 }
 
