@@ -99,6 +99,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
     const [colorIntensity, setColorIntensity] = useState<number>(Math.floor(currentDensity / 15)); 
     const [message, setMessage] = useState<string>("Loading...");
     const [loading, setLoading] = useState<boolean>(true);
+    const [barWidth, setBarWidth] = useState<number>(400);
 
     // fetch the average density data for past 24 hr of this device, updating everytime a differnet popup is opened
     useEffect(() => {
@@ -145,16 +146,18 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
         }
     }, [currentDensity, data])
 
-    let barWidth = 400;
-    if (screen.width < 768) {
-        setData(data.filter((entry) => entry.hour < (currentHour + 12)));
-        if (currentHour > 12) {
-            setData(data.filter((entry) => entry.hour > (currentHour - 12 + (23 - currentHour))));
-        } else {
-            setData(data.filter((entry) => entry.hour >= (currentHour)));
+    // render for different window sizes
+    useEffect(() => {
+        if (screen.width < 768) {
+            setData(data.filter((entry) => entry.hour < (currentHour + 12)));
+            if (currentHour > 12) {
+                setData(data.filter((entry) => entry.hour > (currentHour - 12 + (23 - currentHour))));
+            } else {
+                setData(data.filter((entry) => entry.hour >= (currentHour)));
+            }
+            setBarWidth(300); 
         }
-        barWidth = 300; 
-    }
+    }, [])
 
     return (
         <div className='self-center'>
