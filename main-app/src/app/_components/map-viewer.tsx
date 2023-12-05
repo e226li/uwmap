@@ -44,8 +44,7 @@ export default function MapViewer({token, apiKey} : {token: string | undefined, 
   const [averageDensityData, setAverageDensityData] = useState<AverageDensityData>();
 
 useEffect(() => {
-    // run fetchData immediately to force pins to update immediately on page load
-    (async function fetchData() {
+    async function fetchData() {
         const resAvg = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
         const resJson: AverageDensityData = await resAvg.json();
         setAverageDensityData(resJson);
@@ -53,12 +52,13 @@ useEffect(() => {
         const res = await fetch('https://api.uwmap.live/get-latest-density/', {headers: {'x-api-key': apiKey}});
         const latestData: LatestDensityData = await res.json();
         setLatestData(latestData);
+    }
 
-        // TODO: clearinterval at some point to avoid memory leak?
-        const interval = setInterval(async function() {
-            fetchData()
-        }, 5000);
-    })();
+    // run immediately to make pins load immediately on load
+    fetchData();
+    const interval = setInterval(() => fetchData(), 5000);
+    
+    return () => clearInterval(interval);
 }, [])
 
 useEffect(() => {
