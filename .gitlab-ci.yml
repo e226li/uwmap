@@ -17,6 +17,8 @@ frontend-test:
     - npm run start &
     # save test screenshots
     - mkdir artifacts
+    # sleep to prevent screenshot from being taken before server is up
+    - sleep 5
     - node tests/test-screenshot.js
   artifacts:
     paths:
