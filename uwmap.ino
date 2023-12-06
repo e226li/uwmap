@@ -12,9 +12,9 @@
 
 // local constants
 #define EAP_ANONYMOUS_IDENTITY "anonymous@uwaterloo.ca"
-#define EAP_IDENTITY "c82li@uwaterloo.ca"
-#define EAP_USERNAME "c82li@uwaterloo.ca"
-#define EAP_PASSWORD "aasifjslkfjsdklfj"
+#define EAP_IDENTITY "a383chen@uwaterloo.ca"
+#define EAP_USERNAME "a383chen@uwaterloo.ca"
+#define EAP_PASSWORD "hunter2"
 #define SSID "eduroam"
 #define TEST_SSID "testing uwu"
 #define TEST_PASS "uwuusowarm"
@@ -107,6 +107,7 @@ void loop() {
   if (WiFi.status() == WL_CONNECTED) {
     BLEScanResults foundDevices = pBLEScan->start(10); // scan seconds
     int cnt = foundDevices.getCount(); // actually get data
+
     for (int i = 0; i < cnt; i++) {
       BLEAdvertisedDevice d = foundDevices.getDevice(i);
       //final += "{\"mac\":\"" + String(d.getAddress().toString().c_str()) + "\",\"rssi\":\"" + String(d.getRSSI()) + "\"},";
@@ -130,7 +131,9 @@ void loop() {
     https.end();
 
     //esp_wifi_stop();
-    //esp_sleep_enable_timer_wakeup(50 * 1000000);
-    //esp_deep_sleep_start();
+    esp_sleep_enable_timer_wakeup(50 * 1000000);
+    esp_deep_sleep_start();
+  } else {
+    WiFi.begin(SSID, WPA2_AUTH_PEAP, EAP_IDENTITY, EAP_USERNAME, EAP_PASSWORD);
   }
 }
