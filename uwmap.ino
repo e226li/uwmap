@@ -8,24 +8,15 @@
 #include <esp_wpa2.h>
 #include <esp_wifi.h>
 #include <soc/rtc_cntl_reg.h>
-#include <stdlib.h>
 
-// local constants
-#define EAP_ANONYMOUS_IDENTITY "anonymous@uwaterloo.ca"
-#define EAP_IDENTITY "a383chen@uwaterloo.ca"
-#define EAP_USERNAME "a383chen@uwaterloo.ca"
-#define EAP_PASSWORD "hunter2"
-#define SSID "eduroam"
-#define TEST_SSID "testing uwu"
-#define TEST_PASS "uwuusowarm"
-#define DEVICE_ID "3"
+// constants
+#define API_KEY "d08b3ad6bd9a04c648577b2e405e3a83da8e7d0e"
+#define SSID "UniversityOfWaterloo"
 
-const String url = "https://api.uwmap.live/send-data/?device_id=";
-const String string1 = String("&device_count=");
+const char *url = "https://api.uwmap.live/send-data/?device_id=3&device_count=";
 
 // server constants
 const char *SV_AUTHORITY = "api.uwmap.live";
-//const char *SV_URL = "https://api.uwmap.live/send-data/?device_id=" + DEVICE_ID + "&device_count=";
 const char *SV_ROOT_CERT = \
 "-----BEGIN CERTIFICATE-----\n" \
 "MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw\n" \
@@ -59,37 +50,52 @@ const char *SV_ROOT_CERT = \
 "emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=\n" \
 "-----END CERTIFICATE-----\n";
 
-BLEScan *pBLEScan = NULL; // networking
-HTTPClient https;
-WiFiClientSecure client;
-
+// callback that runs everytime ble scan finds a new device
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
   void onResult(BLEAdvertisedDevice advertisedDevice) {
-    // ss << " new " << advertisedDevice.toString().c_str();
   }
 };
 
-void setup() {
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout
+// do one bluetooth scan and return num of unique devices found
+int scanDevices() {
+  BLEScan *pBLEScan = NULL;
 
-  Serial.begin(115200); // serial
-  Serial.println("hi");
-  pinMode(2,OUTPUT); // led
-
-  BLEDevice::init(""); // bluetooth
+  // configure ble scanner
+  BLEDevice::init("");
   pBLEScan = BLEDevice::getScan();
+
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
   pBLEScan->setActiveScan(true);
   pBLEScan->setInterval(500);
   pBLEScan->setWindow(250);
 
-  WiFi.disconnect(true); // wifi
-  WiFi.mode(WIFI_STA);
-  Serial.println(WiFi.begin(SSID, WPA2_AUTH_PEAP, EAP_IDENTITY, EAP_USERNAME, EAP_PASSWORD));
-  //WiFi.begin(TEST_SSID, TEST_PASS);
-  //WiFi.begin("eduroam");
+  // scan for 5 seconds and save results
+  Serial.println("scanning...");
+  BLEScanResults scanResults = pBLEScan->start(5);
 
-  int time;
+  int deviceCount = scanResults.getCount();
+
+  // free bluetooth related stuff (ensure enough memory space for https ?)
+  pBLEScan->stop();
+  pBLEScan->clearResults();
+  Serial.println("scan complete");
+
+  return deviceCount;
+}
+
+// connect to wifi and send https post req with given device count
+void sendData(int deviceCount) {
+  HTTPClient https;
+  WiFiClientSecure client;
+
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_STA);
+
+  // the ESPs are whitelisted by mac address hence direct connection
+  WiFi.begin(SSID);
+
+  // if wifi fails to connect within 30s, restart esp
+  int time = 0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.print(".");
@@ -99,41 +105,42 @@ void setup() {
     }
   }
 
+  // make post req url
+  // TODO: use c strings instead of String for better memory ?
+  const String finalUrl =  url + String(deviceCount);
+
+  Serial.println(finalUrl);
+
+  // connect with https and send post req
   client.setCACert(SV_ROOT_CERT);
   client.connect(SV_AUTHORITY, 443);
+
+  https.begin(client, finalUrl);
+  https.addHeader("X-API-Key", API_KEY);
+  https.addHeader("Content-Type", "application/json");
+  https.addHeader("accept", "*/*");
+
+  int code = https.POST("");
+  Serial.println(code);
+
+  https.end();
+}
+
+void setup() {
+  // disable brownout
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+
+  Serial.begin(115200);
+  Serial.println("hi");
+
+  int deviceCount = scanDevices();
+
+  sendData(deviceCount);
+
+  // sleep for 20 seconds then restart
+  esp_sleep_enable_timer_wakeup(20 * 1000000);
+  esp_deep_sleep_start();
 }
 
 void loop() {
-  if (WiFi.status() == WL_CONNECTED) {
-    BLEScanResults foundDevices = pBLEScan->start(10); // scan seconds
-    int cnt = foundDevices.getCount(); // actually get data
-
-    for (int i = 0; i < cnt; i++) {
-      BLEAdvertisedDevice d = foundDevices.getDevice(i);
-      //final += "{\"mac\":\"" + String(d.getAddress().toString().c_str()) + "\",\"rssi\":\"" + String(d.getRSSI()) + "\"},";
-      if (i == cnt - 1) {
-         //final.remove(final.length() - 1);
-      }
-    }
-
-    const String finalUrl =  url +  String(DEVICE_ID) + string1 + String(cnt);
-    const String count = String("device count: ") + String(cnt);
-    Serial.println(finalUrl);
-    Serial.println(count);
-
-    https.begin(client, finalUrl);
-    https.addHeader("X-API-Key", "d08b3ad6bd9a04c648577b2e405e3a83da8e7d0e");
-    https.addHeader("Content-Type", "application/json");
-    https.addHeader("accept", "*/*");
-    //Serial.println("{\"device_info\":[]}");
-    int code = https.POST("");
-    Serial.println(code);
-    https.end();
-
-    //esp_wifi_stop();
-    esp_sleep_enable_timer_wakeup(50 * 1000000);
-    esp_deep_sleep_start();
-  } else {
-    WiFi.begin(SSID, WPA2_AUTH_PEAP, EAP_IDENTITY, EAP_USERNAME, EAP_PASSWORD);
-  }
 }
