@@ -37,6 +37,9 @@ class AverageDensity(Density):
 async def lifespan(app: FastAPI):
     await database.connect()
     await database.execute("PRAGMA optimize")
+    # for litestream support
+    await database.execute("PRAGMA busy_timeout = 5000")
+    await database.execute("PRAGMA journal_mode=WAL")
     yield
     await database.disconnect()
 
