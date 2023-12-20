@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from itertools import chain
 from typing import List
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Security, status
+from fastapi import FastAPI, HTTPException, Security, status, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
 import yaml
@@ -89,7 +89,7 @@ async def fetch_from_db(target_hour, now_hour):
     return return_values
 
 
-Instrumentator().instrument(app).expose(app) # dependencies=[Security(get_api_key)] if auth is warranted
+Instrumentator().instrument(app).expose(app)  # dependencies=[Security(get_api_key)] if auth is warranted
 
 
 @app.get("/", include_in_schema=False)
@@ -98,7 +98,7 @@ async def root():
 
 
 @app.post("/send-data/", status_code=204)
-async def save_data(device_id: int,  device_count: int, detected: Detected = None,
+async def save_data(device_id: int, device_count: int, detected: Detected = None,
                     api_key: str = Security(get_api_key)):
     # enforced types should mean no sql injection occurs
     query = "INSERT INTO device_data VALUES(:id, :timestamp, :lat, :long, :count)"
@@ -110,11 +110,12 @@ async def save_data(device_id: int,  device_count: int, detected: Detected = Non
 
 
 @app.get("/get-average-density/")
-async def get_average_density(api_key: str = None) -> AverageDensity:
+async def get_average_density(api_key: str = Query(None, description="No longer needed; field will be "
+                                                                     "removed in 0.4")) -> AverageDensity:
     density = AverageDensity()
 
     now = datetime.now()
-    now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute//30)
+    now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute // 30)
     for hour in range(24):
         return_values_coroutines = [fetch_from_db(hour, now_hour - timedelta(days=day)) for day in range(3)]
         return_values_list = await asyncio.gather(*return_values_coroutines)
@@ -134,7 +135,8 @@ async def get_average_density(api_key: str = None) -> AverageDensity:
 
 
 @app.get("/get-average-density-transposed/")
-async def get_average_density_transposed(api_key: str = None) -> Density:
+async def get_average_density_transposed(api_key: str = Query(None, description="No longer needed; field will be "
+                                                                                "removed in 0.4")) -> Density:
     average_density = await get_average_density()
     new_density = Density()
 
@@ -149,7 +151,8 @@ async def get_average_density_transposed(api_key: str = None) -> Density:
 
 
 @app.get("/get-latest-density/")
-async def get_latest_density(api_key: str = None) -> Density:
+async def get_latest_density(api_key: str = Query(None, description="No longer needed; field will be "
+                                                                    "removed in 0.4")) -> Density:
     density = Density()
 
     now = datetime.now()
