@@ -106,6 +106,12 @@ async def save_data(device_id: int, device_count: int, detected: Detected = None
               'count': device_count}
 
     await database.execute(query=query, values=values)
+
+    if detected is not None:
+        query = "INSERT INTO device_data_verbose VALUES(:id, :timestamp, :lat, :long, :count, :details)"
+        values['details'] = detected.model_dump_json()
+        await database.execute(query=query, values=values)
+
     return
 
 
