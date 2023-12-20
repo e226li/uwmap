@@ -45,7 +45,7 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 
-app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.2", contact={"email": "info@uwmap.live"})
+app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.3", contact={"email": "info@uwmap.live"})
 
 origins = [
     "https://uwmap.live",
@@ -110,7 +110,7 @@ async def save_data(device_id: int,  device_count: int, detected: Detected = Non
 
 
 @app.get("/get-average-density/")
-async def get_average_density(api_key: str = Security(get_api_key)) -> AverageDensity:
+async def get_average_density(api_key: str = None) -> AverageDensity:
     density = AverageDensity()
 
     now = datetime.now()
@@ -134,7 +134,7 @@ async def get_average_density(api_key: str = Security(get_api_key)) -> AverageDe
 
 
 @app.get("/get-average-density-transposed/")
-async def get_average_density_transposed(api_key: str = Security(get_api_key)) -> Density:
+async def get_average_density_transposed(api_key: str = None) -> Density:
     average_density = await get_average_density()
     new_density = Density()
 
@@ -149,7 +149,7 @@ async def get_average_density_transposed(api_key: str = Security(get_api_key)) -
 
 
 @app.get("/get-latest-density/")
-async def get_latest_density(api_key: str = Security(get_api_key)) -> Density:
+async def get_latest_density(api_key: str = None) -> Density:
     density = Density()
 
     now = datetime.now()
