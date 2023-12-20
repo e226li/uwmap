@@ -13,6 +13,7 @@ import yaml
 from databases import Database
 from pydantic import BaseModel
 from starlette.responses import RedirectResponse
+from prometheus_fastapi_instrumentator import Instrumentator
 
 
 class DeviceInfo(BaseModel):
@@ -86,6 +87,9 @@ async def fetch_from_db(target_hour, now_hour):
     values = {'start': current_hour_epoch, 'stop': current_hour_epoch + 3600}
     return_values = await database.fetch_all(query=query, values=values)
     return return_values
+
+
+Instrumentator().instrument(app).expose(app) # dependencies=[Security(get_api_key)] if auth is warranted
 
 
 @app.get("/", include_in_schema=False)
