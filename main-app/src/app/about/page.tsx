@@ -27,14 +27,15 @@ export default function Home() {
   }, []);
 
   const formatter = new Intl.NumberFormat('en-US', { 
-    minimumFractionDigits: 6
+    minimumFractionDigits: 6,
+    useGrouping: false
   })
 
   return (
     <div className="w-[100vw] h-[100vh] overflow-hidden">
         <NavigationBar />
         <div className="my-auto h-[80vh] flex flex-col justify-center items-center gap-3">
-            <div className="flex md:flex-row flex-col gap-10">
+            <div className="flex md:flex-row flex-col gap-10 justify-center items-center">
               <Image 
                 className="w-auto h-auto scale-75 md:scale-100"
                 src="/logo.webp"
@@ -43,7 +44,7 @@ export default function Home() {
                 height={200}
                 priority={true}
               />
-              <div className="my-auto gap-3 flex flex-col justify-center text-center md:text-left md:justify-start mt-[-50px] md:mt-0">
+              <div className="gap-3 flex flex-col justify-center text-center md:text-left md:justify-start mt-[-50px] md:mt-0">
                 <div className="flex flex-row items-center gap-[4px] justify-center md:justify-start">
                     <div className="font-semibold md:text-8xl text-6xl">UW</div>
                     <div className="font-semibold md:text-8xl text-6xl bg-clip-text text-transparent bg-gradient-to-br from-lightblue to-blue-500">Map</div>

@@ -56,9 +56,8 @@ function generateMessage(densityPercentage: number) {
     }
 
     const densityMessages = {
-        25: "It's not very busy",
-        50: "It's a little busy",
-        75: "It's getting busy",
+        60: "It's not very busy",
+        85: "It's getting busy",
         100: "It's busy",
         125: "It's busier than usual",
         150: "It's much busier than usual",
