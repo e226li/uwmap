@@ -19,6 +19,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 class DeviceInfo(BaseModel):
     mac: str
     rssi: str
+    nickname: str
 
 
 class Detected(BaseModel):
