@@ -2,6 +2,8 @@
 
 A modern map for a modern campus.
 
+Online at [uwmap.live](https://uwmap.live/)
+
 ## Deployment
 
 Deployment server is running Debian 12 (Bookworm).
