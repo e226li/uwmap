@@ -4,8 +4,9 @@ import Link from 'next/link'
 export default function NavigationBar() {
 
     const pages = [
-        { name: "Live Map", link: "/" },
+        { name: "Map", link: "/" },
         { name: "About", link: "/about" },
+        { name: "Code", link: "https://github.com/e226li/uwmap" },
     ]
 
     return (
