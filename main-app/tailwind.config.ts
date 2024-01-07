@@ -12,6 +12,7 @@ export default {
       },
       colors: {
         darkbg: "#242527",
+        darkdarkbg: "#202122",
         lightbg: "#f5f5f5",
         lightblue: "#58a9db",
       },

@@ -140,8 +140,8 @@ useEffect(() => {
     }
   }, []);
 
-  const defaultLongitude = -80.5424;
-  const defaultLatitude = 43.4705;
+  const defaultLongitude = -80.543275;
+  const defaultLatitude = 43.47025;
   const distanceOut = 0.02;
   const bounds: [number, number, number, number] = [defaultLongitude - distanceOut, defaultLatitude - distanceOut, defaultLongitude + distanceOut, defaultLatitude + distanceOut];
 
@@ -151,9 +151,9 @@ useEffect(() => {
       ref={mapRef}
       mapboxAccessToken={token}
       initialViewState={{
-        longitude: -80.5424, 
-        latitude: 43.4705,
-        zoom: 15.5, 
+        longitude: defaultLongitude, 
+        latitude: defaultLatitude,
+        zoom: 15.325, 
       }}
       maxBounds={bounds}
       doubleClickZoom={false}

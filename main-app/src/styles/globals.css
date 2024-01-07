@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-    @apply bg-darkbg text-white;
+    @apply bg-darkbg text-white antialiased;
 }
 
 .mapboxgl-popup-close-button {
@@ -18,6 +18,10 @@ body {
     @apply bg-darkbg rounded-lg drop-shadow-lg w-[90vw] self-center p-5 mt-10 md:scale-110 md:mt-12 md:w-auto !important;
 }
 
+.mapboxgl-marker > svg {
+    @apply hover:scale-150 transition-all duration-300;
+}
+
 .recharts-layer .recharts-cartesian-axis-tick > text > tspan {
     fill: #fff !important;
 }
@@ -25,4 +29,102 @@ body {
 .nextjs-toast-errors-parent {
     display: none !important;
     opacity: 0 !important;
+}
+
+.gradient-wipe {
+    @apply bg-gradient-to-r from-lightblue via-blue-500 to-lightblue;
+    background-size: 200% auto;
+    
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    animation: wipe 3s linear infinite;
+}
+
+.gradient-wipe:hover {
+    animation: wipe 0.5s linear infinite;
+}
+
+@keyframes wipe {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.ring-road{
+    position: absolute;
+    left: 50%;
+    top: calc(50% + 30px);
+    transform: translate(-50%, -50%);
+    transform-origin: 0 0; 
+    -webkit-transform-origin: 0 0;
+    -ms-transform-origin: 0 0; 
+    -moz-transform-origin: 0 0;
+
+    @media not all and (min-width: 768px) {
+        scale: 0.6;
+    }
+
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadein 1s ease-in-out;
+    animation-delay: calc(var(--order) * 75ms);
+    animation-fill-mode: forwards;
+}
+
+:root {
+    --loading-in-animation-time: 1s;
+    --loading-animation-time: calc(0.5s + var(--loading-in-animation-time));
+    --loading-out-animation-time: 1s;
+}
+
+.animate-line-and-hide {
+    stroke-dasharray: 2010;
+    stroke-dashoffset: 2010;
+    animation: fadein-notranslate var(--loading-in-animation-time) ease-in-out forwards, dash var(--loading-animation-time) linear forwards, hide var(--loading-out-animation-time) var(--loading-animation-time) ease-out forwards;
+}
+
+.animate-hide {
+    animation : hide var(--loading-out-animation-time) ease-out forwards;
+    animation-delay: var(--loading-animation-time);
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: 4020;
+    }
+}
+
+@keyframes hide {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        z-index: -1;
+        filter: blur(25px);
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadein-notranslate {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
