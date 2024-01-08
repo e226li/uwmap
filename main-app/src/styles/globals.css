@@ -76,9 +76,9 @@ body {
 }
 
 :root {
-    --loading-in-animation-time: 1s;
-    --loading-animation-time: calc(0.5s + var(--loading-in-animation-time));
-    --loading-out-animation-time: 1s;
+    --loading-in-animation-time: 0.2s;
+    --loading-animation-time: calc(0.2s + var(--loading-in-animation-time));
+    --loading-out-animation-time: 0.5s;
 }
 
 .animate-line-and-hide {

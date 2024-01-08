@@ -38,6 +38,6 @@
     "**/*.cjs",
     "**/*.mjs",
     ".next/types/**/*.ts"
-, "src/app/_components/ring-road.jsx"  ],
+, "src/app/_components/ring-road.tsx"  ],
   "exclude": ["node_modules"]
 }

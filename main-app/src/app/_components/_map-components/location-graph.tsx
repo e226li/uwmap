@@ -99,6 +99,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
     const [message, setMessage] = useState<string>("Loading...");
     const [loading, setLoading] = useState<boolean>(true);
     const [barWidth, setBarWidth] = useState<number>(400);
+    const [graphHeight, setGraphHeight] = useState<number>(window.innerHeight / 5);
 
     // fetch the average density data for past 24 hr of this device, updating everytime a differnet popup is opened
     useEffect(() => {
@@ -178,7 +179,7 @@ export default function LocationGraphLocationGraph({id, locationName, apiKey, cu
                 <BarChart
                 style={{margin: 'auto'}}
                 width={barWidth}
-                height={200}
+                height={graphHeight}
                 data={data}
                 barGap={-30}
                 barCategoryGap={1}

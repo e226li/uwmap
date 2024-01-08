@@ -1,6 +1,8 @@
 "use client"
 
-const RingRoadSvg = (/** @type {import("react").JSX.IntrinsicAttributes & import("react").SVGProps<SVGSVGElement>} */ props) => (
+import { useEffect, useState } from 'react';
+
+const RingRoadSvg = (props: import("react").JSX.IntrinsicAttributes & import("react").SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={568.249}
@@ -16,4 +18,18 @@ const RingRoadSvg = (/** @type {import("react").JSX.IntrinsicAttributes & import
     />
   </svg>
 )
-export default RingRoadSvg
+
+export default function RingRoadAnimation() {
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsPageLoaded(true);
+  }, []);
+
+  return (
+    <>
+        <RingRoadSvg className={`absolute z-[20] ring-road scale-[1.13] ${isPageLoaded ? 'animate-line-and-hide' : 'opacity-0'}`}/>
+        <div className={`absolute z-[10] bg-darkbg w-[100%] h-[100vh] ${isPageLoaded ? 'animate-hide' : ''}`}></div>
+    </>
+  )
+}
