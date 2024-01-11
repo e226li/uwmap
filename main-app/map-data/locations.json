@@ -12,12 +12,6 @@
         "longitude":-80.53989477574922 
     },
     {
-        "id": 2,
-        "location": "V1 E1",
-        "latitude": 43.47176555482046, 
-        "longitude":-80.54935654657577
-    },
-    {
         "id": 3,
         "location": "DC SE Lab",
         "latitude": 43.47246767651742, 
@@ -25,21 +19,15 @@
     },
     {
         "id": 4,
-        "location": "E2",
-        "latitude": 43.470896932765825, 
-        "longitude":-80.54010683580242
+        "location": "EIT",
+        "latitude": 43.471613120051295,
+        "longitude": -80.54200426059484
     },
     {
         "id": 5,
-        "location": "E3",
-        "latitude": 43.47159400343551, 
-        "longitude":-80.5402019314242
-    },
-    {
-        "id": 6,
-        "location": "V1 N1",
-        "latitude": 43.47217510, 
-        "longitude":-80.55019770
+        "location": "DP Library",
+        "latitude": 43.46979084374338,
+        "longitude": -80.54225618754515
     },
     {
         "id": 7,
