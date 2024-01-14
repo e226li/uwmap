@@ -6,6 +6,7 @@ Online at [uwmap.live](https://uwmap.live/)
 
 ## Deployment
 
+### Web Server
 Deployment server is running Debian 12 (Bookworm).
 
 ```bash
@@ -80,6 +81,18 @@ pm2 save
 ```
 
 View backend at [api.](https://api.uwmap.live) and frontend at [@.](https://uwmap.live).
+
+### ESP32s
+
+ArduinoIDE is used to deploy firmware (`./uwmap.ino`) to the ESP32s.
+
+To deploy, connect the ESP32 to the computer and set the partition scheme: `Tools > Partition Scheme > Huge APP`.
+
+Modify the line containing the "url" string so that `device_id=x` refers to a desired ESP32 id.
+
+If connected via usb, it is necessary to put the ESP32 into download mode by holding the Boot and Reset buttons simultaneously.
+
+Select the correct board and port, then run Upload.
 
 ## Developing
 
