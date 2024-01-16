@@ -122,7 +122,7 @@ async def get_average_density() -> AverageDensity:
     now = datetime.now()
     now_hour = now.replace(second=0, microsecond=0, minute=0, hour=now.hour) + timedelta(hours=now.minute // 30)
     for hour in range(24):
-        return_values_coroutines = [fetch_from_db(hour, now_hour - timedelta(days=day)) for day in range(3)]
+        return_values_coroutines = [fetch_from_db(hour, now_hour - timedelta(days=day)) for day in range(7)]
         return_values_list = await asyncio.gather(*return_values_coroutines)
         return_values = chain.from_iterable(return_values_list)
 
