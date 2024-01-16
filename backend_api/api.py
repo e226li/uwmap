@@ -34,6 +34,11 @@ class AverageDensity(Density):
     density: dict = dict.fromkeys(range(24), dict())
 
 
+class Cache:
+    last_time: float = 0
+    last_average_density: AverageDensity = None
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await database.connect()
@@ -45,7 +50,8 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 
-app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.3.3", contact={"email": "info@uwmap.live"})
+cache = Cache()
+app = FastAPI(lifespan=lifespan, title="UWMap API", version="0.4.0", contact={"email": "info@uwmap.live"})
 
 origins = [
     "https://uwmap.live",
@@ -110,8 +116,7 @@ async def save_data(device_id: int, device_count: int, detected: Detected = None
 
 
 @app.get("/get-average-density/")
-async def get_average_density(api_key: str = Query(None, description="No longer needed; field will be "
-                                                                     "removed in 0.4")) -> AverageDensity:
+async def get_average_density() -> AverageDensity:
     density = AverageDensity()
 
     now = datetime.now()
@@ -135,9 +140,14 @@ async def get_average_density(api_key: str = Query(None, description="No longer 
 
 
 @app.get("/get-average-density-transposed/")
-async def get_average_density_transposed(api_key: str = Query(None, description="No longer needed; field will be "
-                                                                                "removed in 0.4")) -> Density:
-    average_density = await get_average_density()
+async def get_average_density_transposed(fast: bool = False) -> Density:
+    if cache.last_time + 1.0 < datetime.now().timestamp() and not fast:
+        average_density = await get_average_density()
+        cache.last_average_density = average_density
+        cache.last_time = datetime.now().timestamp()
+    else:
+        average_density = cache.last_average_density
+
     new_density = Density()
 
     transposed_density_dict = defaultdict(dict)
@@ -151,8 +161,7 @@ async def get_average_density_transposed(api_key: str = Query(None, description=
 
 
 @app.get("/get-latest-density/")
-async def get_latest_density(api_key: str = Query(None, description="No longer needed; field will be "
-                                                                    "removed in 0.4")) -> Density:
+async def get_latest_density() -> Density:
     density = Density()
 
     now = datetime.now()
