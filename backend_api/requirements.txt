@@ -2,4 +2,5 @@ fastapi
 python-multipart
 uvicorn[standard]
 databases[sqlite]
+python-jose[cryptography]
 prometheus_fastapi_instrumentator
