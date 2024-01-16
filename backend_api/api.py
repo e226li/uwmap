@@ -2,7 +2,7 @@ import os
 import time
 import asyncio
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from itertools import chain
 from typing import List
 from contextlib import asynccontextmanager
@@ -13,6 +13,7 @@ import yaml
 from databases import Database
 from pydantic import BaseModel
 from starlette.responses import RedirectResponse
+from jose import JWTError, jwt
 from prometheus_fastapi_instrumentator import Instrumentator
 
 
@@ -67,7 +68,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-api_key_header = APIKeyHeader(name="X-API-Key")
+api_key_header = APIKeyHeader(name="X-API-Key", scheme_name="api-key")
+jwt_header = APIKeyHeader(name="X-JWT", scheme_name="jwt")
 
 with open("keys.yaml") as f:
     api_keys = yaml.safe_load(f)
@@ -85,6 +87,29 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid or missing API Key",
     )
+
+
+def get_jwt(jwt_header: str = Security(jwt_header)) -> str:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or missing JWT",
+    )
+    print(jwt_header)
+
+    try:
+        jwt.decode(jwt_header, api_keys[0], algorithms=['HS256'])
+    except JWTError:
+        raise credentials_exception
+
+    return jwt_header
+
+
+def create_access_token():
+    expiry = datetime.now(timezone.utc) + timedelta(minutes=30)
+    data_dict = {"exp": expiry}
+    encoded_jwt = jwt.encode(data_dict, api_keys[0], algorithm='HS256')
+
+    return encoded_jwt
 
 
 async def fetch_from_db(target_hour, now_hour):
@@ -115,8 +140,13 @@ async def save_data(device_id: int, device_count: int, detected: Detected = None
     return
 
 
+@app.post("/create-jwt/", status_code=200)
+async def create_jwt(api_key: str = Security(get_api_key)):
+    return create_access_token()
+
+
 @app.get("/get-average-density/")
-async def get_average_density() -> AverageDensity:
+async def get_average_density(jwt: str = Security(get_jwt)) -> AverageDensity:
     density = AverageDensity()
 
     now = datetime.now()
@@ -140,9 +170,9 @@ async def get_average_density() -> AverageDensity:
 
 
 @app.get("/get-average-density-transposed/")
-async def get_average_density_transposed(fast: bool = False) -> Density:
+async def get_average_density_transposed(fast: bool = False, jwt: str = Security(get_jwt)) -> Density:
     if (cache.last_time + 1.0 < datetime.now().timestamp() and not fast) or cache.last_average_density is None:
-        average_density = await get_average_density()
+        average_density = await get_average_density(jwt=jwt)
         cache.last_average_density = average_density
         cache.last_time = datetime.now().timestamp()
     else:
@@ -161,7 +191,7 @@ async def get_average_density_transposed(fast: bool = False) -> Density:
 
 
 @app.get("/get-latest-density/")
-async def get_latest_density() -> Density:
+async def get_latest_density(jwt: str = Security(get_jwt)) -> Density:
     density = Density()
 
     now = datetime.now()
