@@ -141,7 +141,7 @@ async def get_average_density() -> AverageDensity:
 
 @app.get("/get-average-density-transposed/")
 async def get_average_density_transposed(fast: bool = False) -> Density:
-    if cache.last_time + 1.0 < datetime.now().timestamp() and not fast:
+    if (cache.last_time + 1.0 < datetime.now().timestamp() and not fast) or cache.last_average_density is None:
         average_density = await get_average_density()
         cache.last_average_density = average_density
         cache.last_time = datetime.now().timestamp()
