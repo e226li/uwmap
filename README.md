@@ -1,8 +1,23 @@
-# UWMap
+<p align="center">
+  <a href="https://uwmap.live" target="_blank" rel="noreferrer noopener">
+    <img width="250" alt="UW Map Logo" src="https://github.com/e226li/uwmap/assets/110436783/28600b50-7e7e-4938-9440-2917e9d2fa94">
+  </a>
+</p>
 
-A modern map for a modern campus.
+<p align="center">A <strong>modern map</strong> for a modern campus.</p>
+<br/>
 
-Online at [uwmap.live](https://uwmap.live/)
+<p align="center">
+  <a href="https://uwmap.live/"><img src="https://img.shields.io/static/v1?label=&message=uwmap.live&color=%23202122&style=for-the-badge&logo=vercel&logoColor=%23fffffff" alt="uwmap.live"></a>
+</p>
+
+<h2 align="center">UW Map</h2>
+<br/>
+<p align="center">
+  UW Map is a webapp that allows students to find their way around the University of Waterloo campus, <strong>while avoiding all the traffic</strong>. It features a responsive, interactive map with a variety of useful features and helpful data.
+</p>
+<br/>
+<br/>
 
 ## Deployment
 
