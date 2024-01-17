@@ -44,7 +44,7 @@ export default function MapViewer({token, apiKey} : {token: string | undefined, 
   const [averageDensityData, setAverageDensityData] = useState<AverageDensityData>();
 
 useEffect(() => {
-    async function fetchData(fast: false) {
+    async function fetchData(fast = false) {
         let avgParams;
         if (fast) {
             avgParams = 'fast=true';
