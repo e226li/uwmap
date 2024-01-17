@@ -51,7 +51,7 @@ useEffect(() => {
         } else {
             avgParams = 'fast=false';
         }
-        const resAvg = await fetch('https://api.uwmap.live/get-average-density-transposed?' + avgParams, {headers: {'x-api-key': apiKey}})
+        const resAvg = await fetch('https://api.uwmap.live/get-average-density-transposed/?' + avgParams, {headers: {'x-api-key': apiKey}})
         const resJson: AverageDensityData = await resAvg.json();
         setAverageDensityData(resJson);
     
