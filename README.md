@@ -9,6 +9,7 @@
 
 <p align="center">
   <a href="https://uwmap.live/"><img src="https://img.shields.io/static/v1?label=&message=uwmap.live&color=%23202122&style=for-the-badge&logo=vercel&logoColor=%23fffffff" alt="uwmap.live"></a>
+  <a href="https://api.uwmap.live/docs"><img src="https://img.shields.io/static/v1?label=&message=API&color=%233b82f6&style=for-the-badge&logo=fastapi&logoColor=%23fff" alt="API"></a>
 </p>
 
 <h2 align="center">UW Map</h2>
