@@ -44,8 +44,14 @@ export default function MapViewer({token, apiKey} : {token: string | undefined, 
   const [averageDensityData, setAverageDensityData] = useState<AverageDensityData>();
 
 useEffect(() => {
-    async function fetchData() {
-        const resAvg = await fetch('https://api.uwmap.live/get-average-density-transposed/', {headers: {'x-api-key': apiKey}})
+    async function fetchData(fast: boolean = false) {
+        let avgParams;
+        if (fast) {
+            avgParams = 'fast=true';
+        } else {
+            avgParams = 'fast=false';
+        }
+        const resAvg = await fetch('https://api.uwmap.live/get-average-density-transposed?' + avgParams, {headers: {'x-api-key': apiKey}})
         const resJson: AverageDensityData = await resAvg.json();
         setAverageDensityData(resJson);
     
@@ -55,7 +61,7 @@ useEffect(() => {
     }
 
     // run immediately to make pins load immediately on load
-    fetchData()
+    fetchData(true)
         .catch(e => console.log(e));
     const interval = setInterval(() => fetchData(), 5000);
     
