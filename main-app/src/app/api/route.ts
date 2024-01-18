@@ -1,18 +1,25 @@
-export async function GET(url: string) {
-    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+import type { NextRequest, NextResponse } from 'next/server';
 
-    if (!apiKey) {
-      throw new Error('API_KEY is not defined');
-    }
+export async function GET(req: NextRequest, res: NextResponse) {
+  const url = req.nextUrl.searchParams.get('url');
+  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
-    const res = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        'API-Key': apiKey,
-      },
+  if (!apiKey) {
+    throw new Error('API_KEY is not defined');
+  }
 
-    })
-    const data = await res.json()
-   
-    return data;
+  if (!url) {
+    throw new Error('URL is not defined');
+  }
+
+  const response = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      'API-Key': apiKey,
+    },
+  });
+
+  const data = await response.json();
+
+  return data
 }

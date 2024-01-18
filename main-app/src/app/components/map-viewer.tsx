@@ -27,14 +27,14 @@ export default function MapViewer({token} : {token: string | undefined}){
 
   useEffect(() => {
     async function fetchData(fast: boolean) {
-        const avgParams = fast ? 'fast=true' : 'fast=false';
-        const resAvg = await GET('https://api.uwmap.live/get-average-density-transposed/?' + avgParams)
-        const resJson: AverageDensityDataTable = await resAvg
-        setAverageDensityData(resJson);
-    
-        const res = await GET('https://api.uwmap.live/get-latest-density/');
-        const latestData: LatestDensityData = await res
-        setLatestData(latestData);
+      const avgParams = fast ? 'fast=true' : 'fast=false';
+      const responseAvg = await fetch('https://api.uwmap.live/get-average-density-transposed/?' + avgParams);
+      const resJson: AverageDensityDataTable = await responseAvg.json();
+      setAverageDensityData(resJson);
+  
+      const response = await fetch('https://api.uwmap.live/get-latest-density/');
+      const latestData: LatestDensityData = await response.json();
+      setLatestData(latestData);
     }
 
     fetchData(true)
@@ -128,7 +128,7 @@ useEffect(() => {
 
   return (
     <Map
-      // @ts-expect-error
+      // @ts-expect-error - mapRef is not in the types
       ref={mapRef}
       mapboxAccessToken={token}
       initialViewState={{
