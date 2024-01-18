@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<p align="center">A <strong>modern map</strong> for a modern campus.</p>
+<p align="center"><strong>A modern map for a modern campus.</strong></p>
 <br/>
 
 <p align="center">
@@ -15,7 +15,7 @@
 <h2 align="center">UW Map</h2>
 <br/>
 <p align="center">
-  UW Map is a webapp that allows students to find their way around the University of Waterloo campus, <strong>while avoiding all the traffic</strong>. It features a responsive, interactive map with a variety of useful features and helpful data.
+  UW Map is a webapp that allows students to find their way around the University of Waterloo campus <strong>while avoiding all the traffic</strong>.
 </p>
 <br/>
 <br/>
