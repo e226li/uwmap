@@ -1,4 +1,4 @@
-import type { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest, res: NextResponse) {
   const url = req.nextUrl.searchParams.get('url');
@@ -7,9 +7,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
   if (!apiKey) {
     throw new Error('API_KEY is not defined');
   }
-
+  
   if (!url) {
-    throw new Error('URL is not defined');
+    throw new Error('url is not defined');
   }
 
   const response = await fetch(url, {
@@ -21,5 +21,5 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
   const data = await response.json();
 
-  return data
+  return NextResponse.json(data);
 }
