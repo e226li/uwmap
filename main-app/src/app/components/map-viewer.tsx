@@ -3,67 +3,43 @@
 import { useMemo, useState, useRef, useCallback, useEffect} from "react";
 import Map, {Marker, Popup} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import MapPin from './_map-components/map-pin';
-import LocationGraph from "./_map-components/location-graph";
-import LOCATIONS from "map-data/locations.json";
+import MapPin from './ui/map-pin';
+import LocationGraph from "./ui/location-graph";
+import { map_locations } from "../config/site";
 import type {MapRef} from 'react-map-gl';
-import HeatmapPing from "./_map-components/heatmap-ping";
+import HeatmapPing from "./ui/heatmap-ping";
+import { GET } from "../api/route";
+import type { LocationType } from "../types/data";
+import { LatestDensityData, AverageDensityDataTable } from "../types/data";
 
-// TODO: put interface definitions somewhere else?
-interface LatestDensityData {
-  density: {
-    [id: string]: number
-  },
-  current_hour: number
-}
-
-interface AverageDensityData {
-  density: {
-    [id: string]: {
-      [id: string]: number
-    }
-  },
-  current_hour: number
-}
-
-export default function MapViewer({token, apiKey} : {token: string | undefined, apiKey: string}){
-
-  type LocationType = {
-    id: number;
-    location: string;
-    latitude: number;
-    longitude: number;
-  };
+export default function MapViewer({token} : {token: string | undefined}){
   
   const [popupInfo, setPopupInfo] = useState<LocationType | null>(null);
   const [latestData, setLatestData] = useState<LatestDensityData>();
-  const [currentHour, setCurrentHour] = useState<number>(new Date().getHours());
   const [heatmapPings, setHeatmapPings] = useState<JSX.Element[]>([]);
   const [heatmapPins, setHeatmapPins] = useState<JSX.Element[]>([]);
   const mapRef = useRef<MapRef>();
-  const [averageDensityData, setAverageDensityData] = useState<AverageDensityData>();
+  const [averageDensityData, setAverageDensityData] = useState<AverageDensityDataTable>();
 
-useEffect(() => {
-    async function fetchData(fast = false) {
-        let avgParams;
-        if (fast) {
-            avgParams = 'fast=true';
-        } else {
-            avgParams = 'fast=false';
-        }
-        const resAvg = await fetch('https://api.uwmap.live/get-average-density-transposed/?' + avgParams, {headers: {'x-api-key': apiKey}})
-        const resJson: AverageDensityData = await resAvg.json();
+  const currentHour = useMemo(() => {
+    return new Date().getHours();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData(fast: boolean) {
+        const avgParams = fast ? 'fast=true' : 'fast=false';
+        const resAvg = await GET('https://api.uwmap.live/get-average-density-transposed/?' + avgParams)
+        const resJson: AverageDensityDataTable = await resAvg
         setAverageDensityData(resJson);
     
-        const res = await fetch('https://api.uwmap.live/get-latest-density/', {headers: {'x-api-key': apiKey}});
-        const latestData: LatestDensityData = await res.json();
+        const res = await GET('https://api.uwmap.live/get-latest-density/');
+        const latestData: LatestDensityData = await res
         setLatestData(latestData);
     }
 
-    // run immediately to make pins load immediately on load
     fetchData(true)
         .catch(e => console.log(e));
-    const interval = setInterval(() => fetchData(), 5000);
+    const interval = setInterval(() => fetchData(false), 5000);
     
     return () => clearInterval(interval);
 }, [])
@@ -75,9 +51,8 @@ useEffect(() => {
     
     setHeatmapPings([]);
     setHeatmapPins([]);
-  
-    LOCATIONS.forEach(location => {
-      // account for null data
+
+    map_locations.forEach(location => {
       let currentHourDensity = 0;
       if (averageDensityData.density[location.id]) {
         currentHourDensity = averageDensityData.density[location.id]![currentHour] ?? 0;
@@ -100,8 +75,8 @@ useEffect(() => {
       )
     })
 
-    LOCATIONS.forEach(location => {
-      // account for null data
+    map_locations.forEach(location => {
+
       let currentHourDensity = 0;
       if (averageDensityData.density[location.id]) {
         currentHourDensity = averageDensityData.density[location.id]![currentHour] ?? 0;
@@ -153,7 +128,7 @@ useEffect(() => {
 
   return (
     <Map
-    // @ts-expect-error mapref is annoying
+      // @ts-expect-error
       ref={mapRef}
       mapboxAccessToken={token}
       initialViewState={{
@@ -181,7 +156,6 @@ useEffect(() => {
           <LocationGraph
             id={popupInfo.id}
             locationName={popupInfo.location}
-            apiKey={apiKey}
             currentDensity={latestData?.density[popupInfo.id] ?? 0} 
           />
         </Popup>

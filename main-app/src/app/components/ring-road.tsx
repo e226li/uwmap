@@ -29,7 +29,7 @@ export default function RingRoadAnimation() {
   return (
     <>
         <RingRoadSvg className={`absolute z-[20] ring-road scale-[1.13] ${isPageLoaded ? 'animate-line-and-hide' : 'opacity-0'}`}/>
-        <div className={`absolute z-[10] bg-darkbg w-[100%] h-[100vh] ${isPageLoaded ? 'animate-hide' : ''}`}></div>
+        <div className={`absolute z-[10] bg-darkbg w-[100%] h-[100%] ${isPageLoaded ? 'animate-hide' : ''}`}></div>
     </>
   )
 }

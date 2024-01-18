@@ -1,16 +1,9 @@
+import { heatmap_colors } from "~/app/config/site";
+
 const minZoom = 14.232424440592853
 const maxZoom =  22
 
-const densityColors = [
-    "#45A9FDff",
-    "#6F85FEff",
-    "#816FFEff",
-    "#AE52B9ff",
-    "#E03057ff",
-]
-
 export default function HeatmapPing({density, averageDensity, zoom} : {density: number, averageDensity: number, zoom: number}) {
-
     const opacity = (zoom - minZoom)/(maxZoom - minZoom) - 0.2;
     
     let colorIntensity = (Math.floor(density / (averageDensity / 2)))
@@ -29,7 +22,7 @@ export default function HeatmapPing({density, averageDensity, zoom} : {density: 
                 position: "absolute",
                 top: -pingRadius/2,
                 left: -pingRadius/2,
-                background: `radial-gradient(circle, ${densityColors[colorIntensity - 1]} 20%, transparent)`,
+                background: `radial-gradient(circle, ${heatmap_colors[colorIntensity - 1]} 20%, transparent)`,
             }} 
             className={`rounded-full ${(colorIntensity == 1) ? "animate-slow-ping" : "animate-medium-ping"}`}
         />
