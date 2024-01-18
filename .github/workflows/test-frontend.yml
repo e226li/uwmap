@@ -13,7 +13,7 @@ jobs:
         run: npm install -g wait-on
       - name: Install app dependencies
         run: |
-          npm install
+          npm ci
       - name: Add environment variables
         env:
           MAPBOX_APIKEY: ${{ secrets.mapboxApiKey }}
