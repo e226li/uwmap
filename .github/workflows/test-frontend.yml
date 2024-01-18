@@ -18,8 +18,8 @@ jobs:
         env:
           MAPBOX_APIKEY: ${{ secrets.mapboxApiKey }}
         run: |
-          echo "API_KEY=not-a-key" > .env
-          echo "MAPBOX_TOKEN=$MAPBOX_APIKEY" >> .env
+          echo "NEXT_PUBLIC_API_KEY=not-a-key" > .env
+          echo "NEXT_PUBLIC_MAPBOX_TOKEN=$MAPBOX_APIKEY" >> .env
       - name: Install puppeteer dependencies
         run: |
           sudo apt-get update
