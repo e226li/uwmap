@@ -1,10 +1,4 @@
-const densityColors = [
-    "#45A9FDff",
-    "#6F85FEff",
-    "#816FFEff",
-    "#AE52B9ff",
-    "#E03057ff",
-]
+import { heatmap_colors } from "~/app/config/site";
 
 export default function MapPin({density, averageDensity} : {density: number, averageDensity: number}) {
 
@@ -13,7 +7,7 @@ export default function MapPin({density, averageDensity} : {density: number, ave
 
     const pinStyle = {
         cursor: 'pointer',
-        fill: `${densityColors[colorIntensity - 1]}`,
+        fill: `${heatmap_colors[colorIntensity - 1]}`,
         stroke: 'none',
         opacity: 1,
     };

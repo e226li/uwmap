@@ -2,19 +2,16 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { siteConfig } from '../config/site';
 import { FaGithub } from "react-icons/fa";
 
 export default function NavigationBar() {
 
-    const pages = [
-        { name: "Map", link: "/" },
-        { name: "About", link: "/about" },
-        { name: "Code", link: "https://github.com/e226li/uwmap" },
-    ]
-
     const reloadPage = () => {
         window.location.reload()
     }
+
+    const pages = siteConfig.pages;
 
     return (
         <div className="h-[60px] w-full bg-darkdarkbg relative z-[50]">
@@ -30,9 +27,9 @@ export default function NavigationBar() {
                             style={{width: 'auto', height: 'auto'}}
                         />
                     </Link>
-                    <div className="flex flex-row items-center gap-[4px] cursor-default">
-                        <div className="font-bold text-xl">UW</div>
-                        <div className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-br from-lightblue to-blue-500 gradient-wipe hover:gradient-wipe-fast">Map</div>
+                    <div className="flex flex-row items-center gap-[4px] cursor-default font-bold text-xl">
+                        <div>UW</div>
+                        <div className="bg-clip-text text-transparent bg-gradient-to-br from-lightblue to-blue-500 gradient-wipe hover:gradient-wipe-fast">Map</div>
                     </div>
                 </div>
                 <div className="flex flex-row items-center gap-5 max-sm:gap-3 h-full mr-6">
