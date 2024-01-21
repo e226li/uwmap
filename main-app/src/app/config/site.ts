@@ -64,9 +64,9 @@ export const heatmap_colors = [
 /* Messages for density and time */
 
 export const density_messages = {
-    40: "It's not busy",
-    80: "It's as usual",
-    120: "It's getting busy",
+    40: "It's very quiet",
+    80: "It's not as busy as usual",
+    120: "It's as usual",
     150: "It's busier than usual",
     175: "It's much busier than usual",
     250: "It's extremely busy"
