@@ -123,7 +123,7 @@ useEffect(() => {
 
   const defaultLongitude = -80.543275;
   const defaultLatitude = 43.47025;
-  const distanceOut = 0.02;
+  const distanceOut = 0.012;
   const bounds: [number, number, number, number] = [defaultLongitude - distanceOut, defaultLatitude - distanceOut, defaultLongitude + distanceOut, defaultLatitude + distanceOut];
 
   return (
@@ -139,6 +139,7 @@ useEffect(() => {
       maxBounds={bounds}
       doubleClickZoom={false}
       onZoom={onZoom}
+      minZoom={15.325}
       mapStyle="mapbox://styles/alexstarosta/clp71tw2j012301qqbc7i101p"
     > 
 
