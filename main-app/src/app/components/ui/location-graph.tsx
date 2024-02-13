@@ -40,7 +40,11 @@ export default function LocationGraphLocationGraph({id, locationName, currentDen
     const [message, setMessage] = useState<string>("Loading...");
     const [loading, setLoading] = useState<boolean>(true);
     
-    const barWidth = 400;
+    let barWidth = 450;
+    if (window.innerWidth < 768) {
+        barWidth = window.innerWidth - 100;
+    }
+
     const graphHeight = (window.innerHeight / 5);
     const currentHour = useMemo(() => {
         return new Date().getHours();
