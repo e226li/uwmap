@@ -35,8 +35,10 @@ class AverageDensity(Density):
 
 
 class Cache:
-    last_time: float = 0
+    last_average_density_time: float = 0
     last_average_density: AverageDensity = None
+    last_latest_density_time: float = 0
+    last_latest_density: Density = None
 
 
 @asynccontextmanager
@@ -141,10 +143,10 @@ async def get_average_density() -> AverageDensity:
 
 @app.get("/get-average-density-transposed/")
 async def get_average_density_transposed(fast: bool = False) -> Density:
-    if (cache.last_time + 1.0 < datetime.now().timestamp() and not fast) or cache.last_average_density is None:
+    if (cache.last_average_density_time + 1.0 < datetime.now().timestamp() and not fast) or cache.last_average_density is None:
         average_density = await get_average_density()
         cache.last_average_density = average_density
-        cache.last_time = datetime.now().timestamp()
+        cache.last_average_density_time = datetime.now().timestamp()
     else:
         average_density = cache.last_average_density
 
@@ -161,7 +163,12 @@ async def get_average_density_transposed(fast: bool = False) -> Density:
 
 
 @app.get("/get-latest-density/")
-async def get_latest_density() -> Density:
+async def get_latest_density(fast: bool = False) -> Density:
+    if (cache.last_latest_density_time + 1.0 >= datetime.now().timestamp() or fast) and cache.last_latest_density is not None:
+        return cache.last_latest_density
+
+    cache.last_latest_density_time = datetime.now().timestamp()
+
     density = Density()
 
     now = datetime.now()
@@ -180,4 +187,6 @@ async def get_latest_density() -> Density:
             if hour == (now_hour.hour - 1) % 24:
                 density.density[device_id] = last_run_count[device_id]
 
+    cache.last_latest_density = density
+    cache.last_latest_density_time = datetime.now().timestamp()
     return density
